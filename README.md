@@ -17,13 +17,23 @@ Step-by-step developer tasks and milestone checklists are tracked in [`docs/GUID
 ## Prerequisites
 
 - **C++ Compiler**: Clang (LLVM >= 14) or GCC (>= 11) with full C++20 support.
-- **Build System**: CMake (>= 3.20) and Make.
+- **Build System**: Make.
 - **Python (Optional, for plots)**: Python 3.9+ with `matplotlib` and `pandas`.
 - **Graphics (Upcoming v0.2)**: [Raylib](https://www.raylib.com/) (`brew install raylib`).
 
 ## Quick Start 
 
-> NOTE : Not implemented yet
+Start by cloning the repo into your current workspace : 
+```bash 
+git clone https://github.com/axelp-dev/BioChroma
+```
+and install prerequisites. Next, you can simply update the local `CXX` variable with your C++ compilator path. And then simply use the provided `Makefile` to compile and run the project: 
+```bash 
+make 
+make run 
+make clean
+```
+
 
 ## Architecture Summary 
 

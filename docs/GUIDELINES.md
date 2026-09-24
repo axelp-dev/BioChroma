@@ -6,7 +6,7 @@
 
 ## Phase 1: Build Infrastructure & Core Algebra (v0.1)
 
-- [ ] **Step 1.1 — Build System & Directory Setup**
+- [x] **Step 1.1 — Build System & Directory Setup**
   - Create the root `Makefile` wrapper (`all`, `build`, `test`, `clean`).
   - Add standard `.gitignore` rules for CMake build directories, generated binaries, and data outputs.
   - Verify that a minimal `src/main.cpp` compiles and executes correctly.

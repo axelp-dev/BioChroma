@@ -5,6 +5,8 @@ Here are listed all the project changes from the initial commit to the last Unre
 ## [Unreleased]
 
 ### Added 
+- `.gitignore` file containing `obj/` and `bin/` folders. 
+- `Makefile` with differents rules (`all`, `run` and `clean`) for quick project management en tests. 
 - Comprehensive implementation roadmap and engineering guidelines (`docs/GUIDELINES.md`).
 - Clarified polymorphic bacterial hierarchy (`StandardBacterium`, `ChemotacticBacterium`) in design specs.
 - Canonical class form specifications and raw memory management design for `Grid`.
