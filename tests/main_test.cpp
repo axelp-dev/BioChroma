@@ -10,7 +10,6 @@ int main() {
     run_vector2_tests();
     run_grid_tests(); 
 
-
     std::cout << "\n---------------------------------------------------------\n";
     int total = Test::passed_count + Test::failed_count;
     std::cout << "Results: "
