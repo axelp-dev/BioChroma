@@ -26,11 +26,13 @@
 
 ## Phase 2: Physical Modeling & Agent Hierarchy (v0.1)
 
-- [ ] **Step 2.1 — 2D Finite-Difference Diffusion**
+- [x] **Step 2.1 — 2D Finite-Difference Diffusion**
   - Implement continuous-to-discrete spatial mapping functions (`Vector2` to grid coordinates).
-  - Implement `PetriDish::diffuse(float dt)` using an explicit 5-point Laplacian stencil.
+  - Implement diffusion using an explicit 5-point Laplacian stencil.
   - Enforce boundary reflections (Neumann conditions) or closed dish constraints.
   - Add unit tests verifying global nutrient mass conservation across successive diffusion steps.
+  
+- [ ] *Feature* - Add `Grid` import from `.txt` ASCII file and unit tests associated with `data/examples/examples.txt`. 
 
 - [ ] **Step 2.2 — Polymorphic Bacterium Hierarchy**
   - Define the abstract base class `Bacterium` with pure virtual methods (`update`, `clone`) and a virtual destructor.
