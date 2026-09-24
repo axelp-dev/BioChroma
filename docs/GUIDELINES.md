@@ -16,7 +16,7 @@
   - Implement continuous vector operator overloads: `operator+`, `operator*`, and equality checks.
   - Set up `tests/test_types.cpp` to validate vector algebra and boundary conditions.
 
-- [ ] **Step 1.3 — Dynamic Memory Grid Management**
+- [x] **Step 1.3 — Dynamic Memory Grid Management**
   - Implement the `Grid` class managing a dynamically allocated continuous buffer (`float* nutrients` via `new[]` and `delete[]`).
   - Strictly enforce canonical class form: deep-copy copy constructor, copy assignment `operator=`, and destructor.
   - Overload `operator()(int x, int y)` (both mutable reference and `const` value accessors).

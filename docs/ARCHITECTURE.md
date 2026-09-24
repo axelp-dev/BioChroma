@@ -39,22 +39,12 @@ Here are presented all the structures and classes used in the project.
 > **NOTE**: The `Bacterium` objects are not stored inside the grid cells, but inside a flat `std::vector` within the `Simulation` orchestrator. Bacterial positions are represented in a continuous 2D space ($\mathbb{R}^2$) using `Vector2`.
 
 ```cpp
-#pragma once
-#include <cstdint>
-
 // Internal states of a bacterium
 enum class BacteriumState : uint8_t {
     ALIVE,      // Active agent: moves, feeds, metabolizes
     DEAD,       // Inactive agent scheduled for cleanup
     DIVISION,   // Undergoing binary fission
     SPORE       // Dormant state under severe nutrient scarcity
-};
-
-// 2D discrete environment grid (contiguous dynamically allocated buffer)
-struct Grid {
-    int N = 100;                    // Grid dimensions (N x N cells)
-    float cell_size = 1.0f;         // Spatial size of a cell in world units
-    float* nutrients = nullptr;     // Linearized nutrient buffer (size N * N)
 };
 ```
 
@@ -131,7 +121,7 @@ classDiagram
         +operator=(const Grid& other) Grid&
         +~Grid()
         +operator()(int x, int y) float&
-        +operator()(int x, int y) const float
+        +set(int x, int y, float value) void
     }
 
     class PetriDish {

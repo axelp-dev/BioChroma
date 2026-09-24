@@ -5,6 +5,7 @@ Here are listed all the project changes from the initial commit to the last Unre
 ## [Unreleased]
 
 ### Added 
+- `Grid.h` and `Grid.cpp` implementation of the `N` times `N` nutrients grid. Also build unit tests for this class (in `tests/` and update `Makefile` with new modules). 
 - `Vector2.h` and `Vector2.cpp` implementation of $\mathbb{R}^2$ basic vectors calculus. 
 - `TestRunner` definition and units tests for `Vector2` class. 
 - `.gitignore` file containing `obj/` and `bin/` folders. 
