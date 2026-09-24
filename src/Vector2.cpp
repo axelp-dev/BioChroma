@@ -9,7 +9,7 @@ Vector2::Vector2(float x, float y) : x(x), y(y) {}
 // Init Vector2 as the same position than a given one
 Vector2::Vector2(const Vector2& other) : x(other.x), y(other.y) {}
 
-// Affectation same as copy constructor
+// Affectation 
 Vector2& Vector2::operator=(const Vector2& other) {
     if (this != &other) {
         this->x = other.x;
