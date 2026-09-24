@@ -6,7 +6,7 @@ CXXFLAGS := -std=c++20 -Wall -Wextra -Iinclude
 # === Get OBJ, SRCS and dependencies === 
 SRCS_ROOT := $(wildcard *.cpp)
 SRCS_SRC  := $(wildcard src/*.cpp)
-TEST_SRCS := tests/main_test.cpp tests/test_vector2.cpp src/Vector2.cpp
+TEST_SRCS := tests/main_test.cpp tests/test_vector2.cpp src/Vector2.cpp tests/test_grid.cpp src/Grid.cpp
 
 OBJS := $(patsubst %.cpp, obj/%.o, $(SRCS_ROOT)) \
         $(patsubst src/%.cpp, obj/%.o, $(SRCS_SRC))
