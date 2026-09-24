@@ -1,6 +1,7 @@
 # BioChroma 
 
 A C++ Markov chain based Petri dish simulator for multiple bacteria species evolution. Uses a C++20 implementations and a `kallisto` CLI launcher (unreleased). 
+
 ## Overview
 
 **BioChroma** simulates the competitive dynamics and evolutionary adaptation of bacterial colonies on a 2D continuous surface. 
@@ -9,14 +10,9 @@ A C++ Markov chain based Petri dish simulator for multiple bacteria species evol
 - **Macroscopic environment**: A continuous-to-discrete 2D nutrient grid subjected to consumption and 5-point stencil finite-difference diffusion.
 - **Data analysis**: Headless simulation metrics are exported as CSV files for post-processing and population dynamics plotting via Python/Matplotlib.
 
-Detailed technical specifications and class diagrams are available in [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
+Detailed technical specifications and class diagrams are available in [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).  
+Step-by-step developer tasks and milestone checklists are tracked in [`docs/GUIDELINES.md`](docs/GUIDELINES.md).
 
-## Project Status & Roadmap
-
-- [ ] **v0.1 — Headless Core Engine**: Markov lifecycle, 2D diffusion, CSV telemetry.
-- [ ] **v0.2 — Interactive Viewport**: Real-time rendering via Raylib.
-- [ ] **v0.3 — Collective Dynamics**: Quorum sensing, crowding effects, and binary fission.
-- [ ] **v0.4 — Evolutionary Drift**: Stochastic parameter mutations and phylogenetic tracking.
 
 ## Prerequisites
 
@@ -36,6 +32,8 @@ BioChroma/
 ├── CMakeLists.txt        # Build definitions
 ├── Makefile              # Developer shortcuts
 ├── docs/                 # Architectural specifications & Mermaid diagrams
+│   ├── ARCHITECTURE.md   # System architecture, classes & data pipeline
+│   └── GUIDELINES.md     # Step-by-step engineering roadmap & task breakdown
 ├── include/              # Public headers (Types, Bacterium, PetriDish, Simulation)
 ├── src/                  # Source implementations and CLI entry point
 ├── tests/                # Unit test suites
