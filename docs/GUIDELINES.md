@@ -7,7 +7,6 @@
 ## Phase 1: Build Infrastructure & Core Algebra (v0.1)
 
 - [ ] **Step 1.1 — Build System & Directory Setup**
-  - Configure root `CMakeLists.txt` targeting C++20 with strict compiler warnings (`-Wall -Wextra -Wpedantic`).
   - Create the root `Makefile` wrapper (`all`, `build`, `test`, `clean`).
   - Add standard `.gitignore` rules for CMake build directories, generated binaries, and data outputs.
   - Verify that a minimal `src/main.cpp` compiles and executes correctly.
