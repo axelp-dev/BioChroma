@@ -31,22 +31,38 @@ and install prerequisites. Next, you can simply update the local `CXX` variable 
 ```bash 
 make 
 make run 
-make clean
 ```
+To launch unit tests you ca simply use the `Makefile` command: 
+```bash 
+make test 
+```
+and a colored CLI display will present the tests results. Finnally, run `make clean` to delete build files and folders. 
 
 
 ## Architecture Summary 
 
 ```text 
+
 BioChroma/
-├── CMakeLists.txt        # Build definitions
-├── Makefile              # Developer shortcuts
-├── docs/                 # Architectural specifications & Mermaid diagrams
-│   ├── ARCHITECTURE.md   # System architecture, classes & data pipeline
-│   └── GUIDELINES.md     # Step-by-step engineering roadmap & task breakdown
-├── include/              # Public headers (Types, Bacterium, PetriDish, Simulation)
-├── src/                  # Source implementations and CLI entry point
-├── tests/                # Unit test suites
-├── scripts/              # Python plotting and validation scripts
-└── data/                 # Output CSV logs
+├── data                     # Output CSV logs
+├── docs
+│   ├── ARCHITECTURE.md     # System architecture, classes & data pipeline
+│   └── GUIDELINES.md       # Step-by-step engineering roadmap & task breakdown
+├── include                 # Public headers (Types, Bacterium, PetriDish, Simulation)
+│   ├── Types.h             # Basic struct types 
+│   └── Vector2.h           # Vector2 header
+├── src
+│   └── Vector2.cpp         # Vector2 implementation
+└── tests
+│   ├── main_test.cpp       # Test launcher 
+│   ├── test_bacterium.cpp  
+│   ├── test_PetriDish.cpp
+│   ├── test_simulation.cpp
+│   ├── test_vector2.cpp    # Units tests for Vector2
+│   └── TestRunner.h        # TestRunner namespace definition
+├── main.cpp                # App entry point
+├── Makefile                # Developer shortcuts
+├── README.md
+├── CHANGELOG.md
+└── scripts                  # Python plotting and validation scripts
 ```

@@ -5,6 +5,8 @@ Here are listed all the project changes from the initial commit to the last Unre
 ## [Unreleased]
 
 ### Added 
+- `Vector2.h` and `Vector2.cpp` implementation of $\mathbb{R}^2$ basic vectors calculus. 
+- `TestRunner` definition and units tests for `Vector2` class. 
 - `.gitignore` file containing `obj/` and `bin/` folders. 
 - `Makefile` with differents rules (`all`, `run` and `clean`) for quick project management en tests. 
 - Comprehensive implementation roadmap and engineering guidelines (`docs/GUIDELINES.md`).

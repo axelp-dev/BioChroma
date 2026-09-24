@@ -11,7 +11,7 @@
   - Add standard `.gitignore` rules for CMake build directories, generated binaries, and data outputs.
   - Verify that a minimal `src/main.cpp` compiles and executes correctly.
 
-- [ ] **Step 1.2 — Basic Types & Vector Arithmetic**
+- [x] **Step 1.2 — Basic Types & Vector Arithmetic**
   - Implement `include/Types.hpp` containing `BacteriumState` enum class and `Vector2` struct.
   - Implement continuous vector operator overloads: `operator+`, `operator*`, and equality checks.
   - Set up `tests/test_types.cpp` to validate vector algebra and boundary conditions.
