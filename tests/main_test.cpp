@@ -1,14 +1,15 @@
 #include "TestRunner.h"
 
-// Déclaration de la suite
 void run_vector2_tests();
 void run_grid_tests();
+void run_bacterium_tests();
 
 int main() {
     std::cout << Test::BOLD << "\n================ Running BioChroma Tests ================\n\n" << Test::RESET;
 
     run_vector2_tests();
     run_grid_tests(); 
+    run_bacterium_tests(); 
 
     std::cout << "\n---------------------------------------------------------\n";
     int total = Test::passed_count + Test::failed_count;
