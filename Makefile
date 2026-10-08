@@ -9,7 +9,8 @@ SRCS_SRC  := $(wildcard src/*.cpp)
 TEST_SRCS := tests/main_test.cpp \
              tests/test_vector2.cpp src/Vector2.cpp \
              tests/test_grid.cpp src/Grid.cpp \
-             tests/test_bacterium.cpp src/Bacterium.cpp
+             tests/test_bacterium.cpp src/Bacterium.cpp \
+			 tests/test_simulation.cpp src/Simulation.cpp
 
 OBJS := $(patsubst %.cpp, obj/%.o, $(SRCS_ROOT)) \
         $(patsubst src/%.cpp, obj/%.o, $(SRCS_SRC))

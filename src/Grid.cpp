@@ -60,7 +60,7 @@ void Grid::put_obstacle(int x, int y) {
     this->nutrients[y * this->N + x] = -1;
 }
 
-bool Grid::is_obstacle(int x, int y) {
+bool Grid::is_obstacle(int x, int y) const {
     // Return true if this position contains an obstacle 
     if (this->nutrients[y * this->N + x] == -1) {
         return true; 
@@ -96,7 +96,7 @@ void Grid::consume_nutrient_at(Vector2 pos, float amount) {
     this->nutrients[y * this->N + x] -= amount; 
 }
 
-int Grid::get_n() { return this->N;}
+int Grid::get_n() const { return this->N;}
 
 void Grid::diffuse(float dt, float diffusion_coeff) {
     (void)dt;

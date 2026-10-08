@@ -25,10 +25,10 @@ class Grid {
         ~Grid(); 
         void set_nutrient(int x, int y, float value); 
         void put_obstacle(int x, int y); 
-        bool is_obstacle(int x, int y); 
+        bool is_obstacle(int x, int y) const; 
         void diffuse(float dt, float diffusion_coeff); 
         float get_nutrient_at(Vector2 pos) const; 
-        int get_n(); 
+        int get_n() const; 
         void consume_nutrient_at(Vector2 pos, float amount); 
 }; 
 

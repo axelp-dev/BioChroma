@@ -3,6 +3,7 @@
 void run_vector2_tests();
 void run_grid_tests();
 void run_bacterium_tests();
+void run_simulation_tests();
 
 int main() {
     std::cout << Test::BOLD << "\n================ Running BioChroma Tests ================\n\n" << Test::RESET;
@@ -10,6 +11,7 @@ int main() {
     run_vector2_tests();
     run_grid_tests(); 
     run_bacterium_tests(); 
+    run_simulation_tests(); 
 
     std::cout << "\n---------------------------------------------------------\n";
     int total = Test::passed_count + Test::failed_count;

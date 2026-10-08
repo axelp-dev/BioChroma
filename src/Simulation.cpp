@@ -7,7 +7,7 @@
 #include <cmath>
 
 Simulation::Simulation(Grid& grid, float dt) {
-    this->grid = &grid; 
+    this->grid = new Grid(grid); 
     this->dt = dt;
     this->current_step = 0; 
     this->n_bacteria = 0; 
@@ -18,14 +18,14 @@ Simulation::Simulation(Grid& grid, float dt) {
 }
 
 Simulation::Simulation(const Simulation& other) {
-    this->grid = other.grid; 
+    this->grid = new Grid(*(other.grid)); 
     this->dt = other.dt; 
     this->current_step = other.current_step; 
     this->n_bacteria = other.n_bacteria; 
     this->max_bacteria = other.max_bacteria; 
-    this->diffusion_coeff = 0.5; 
+    this->diffusion_coeff = other.diffusion_coeff;
     // Bacteria array deep-copy 
-    this->bacteria = new Bacterium[other.n_bacteria]; 
+    this->bacteria = new Bacterium[other.max_bacteria]; 
     for (int i = 0; i < other.n_bacteria; i++) {
         this->bacteria[i] = other.bacteria[i]; 
     }

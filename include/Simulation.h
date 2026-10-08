@@ -27,6 +27,10 @@ class Simulation {
         void launch(uint32_t total_steps); 
         void display(); 
         // friend class Logger
+
+        // Test methods 
+        int get_population() const { return this->n_bacteria; }
+        const Grid* get_grid() const { return this->grid; }
 }; 
 
 
