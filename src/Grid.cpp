@@ -46,12 +46,28 @@ Grid::~Grid() {
     delete[] this->nutrients; 
 }
 
-void Grid::set(int x, int y, float value) {
+void Grid::set_nutrient(int x, int y, float value) {
     if (x < 0 || x >= this->N || y < 0 || y >= this->N) {
-        throw std::out_of_range("Coordinates out of range for Grid::set().");
+        throw std::out_of_range("Coordinates out of range for Grid::set_obstacle().");
     }
     this->nutrients[y * this->N + x] = value;
 }
+
+void Grid::put_obstacle(int x, int y) {
+    if (x < 0 || x >= this->N || y < 0 || y >= this->N) {
+        throw std::out_of_range("Coordinates out of range for Grid::set_obstacle().");
+    }
+    this->nutrients[y * this->N + x] = -1;
+}
+
+bool Grid::is_obstacle(int x, int y) {
+    // Return true if this position contains an obstacle 
+    if (this->nutrients[y * this->N + x] == -1) {
+        return true; 
+    }
+    return false; 
+}
+
 
 // Return nutrient value at a Vector2 point of the Grid
 float Grid::get_nutrient_at(Vector2 pos) const {
@@ -80,6 +96,7 @@ void Grid::consume_nutrient_at(Vector2 pos, float amount) {
     this->nutrients[y * this->N + x] -= amount; 
 }
 
+int Grid::get_n() { return this->N;}
 
 void Grid::diffuse(float dt, float diffusion_coeff) {
     (void)dt;

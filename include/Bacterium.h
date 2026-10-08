@@ -8,22 +8,6 @@
 #include <math.h>
 #include <cmath>
 
-// class Bacterium {
-//         <<abstract>>
-//         #Vector2 position
-//         #BacteriumState state
-//         #float energy
-//         #float velocity
-//         #float mutation_prob
-//         #uint32_t id
-//         +Bacterium()
-//         +Bacterium(const Bacterium& other)
-//         +operator=(const Bacterium& other) Bacterium&
-//         +virtual ~Bacterium()
-//         +virtual update(float dt, float local_nutrient)* void
-//         +virtual clone()* Bacterium*
-//     }
-
 class Bacterium {
 
     private: 
