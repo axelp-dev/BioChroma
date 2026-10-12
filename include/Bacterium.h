@@ -28,6 +28,9 @@ class Bacterium {
         virtual ~Bacterium(); 
         virtual void update(float dt, float local_nutrient); 
         virtual Bacterium* clone(); 
+
+        // Getter/Setter
+        void set_id(uint32_t id) {this->id = id;}; 
 }; 
 
 

@@ -23,9 +23,9 @@ class Simulation {
         Simulation(const std::string& filepath); 
         ~Simulation(); 
         void add_bacteria(Bacterium* b); 
-        void delete_bacteria(); 
+        void delete_dead_bacteria(); 
         void step(); 
-        void launch(uint32_t total_steps); 
+        void launch(int total_steps); 
         void display(); 
         // friend class Logger
 

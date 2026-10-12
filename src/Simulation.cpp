@@ -112,8 +112,8 @@ Simulation::Simulation(const std::string& filepath) {
                         throw std::runtime_error("Trying to put a Bacterium on a wall!");
                     }
                     Vector2 p(static_cast<float>(x), static_cast<float>(grid_y));
-                    Bacterium b(p, 5.0f, 1.0f, 0.2f, next_bacterium_id++);
-                    this->add_bacteria(&b);
+                    Bacterium* b = new Bacterium(p, 5.0f, 1.0f, 0.2f, next_bacterium_id++);
+                    this->add_bacteria(b);
                 }
             }
         }
@@ -236,4 +236,82 @@ void Simulation::display() {
     }
 
     std::cout << " " << std::string(n * 2 + 3, '-') << "\n";
+}
+
+
+void Simulation::delete_dead_bacteria() {
+    // Delete all DEAD bacteria from the storage array Bacterium** bacteria
+    int i = 0; 
+    while (i < this->n_bacteria) {
+        // Check if the bacteria is DEAD 
+        if (this->bacteria[i]->state == BacteriumState::DEAD) {
+            // Exchange this Bacterium with the last one 
+            delete this->bacteria[i]; 
+            this->bacteria[i] = this->bacteria[this->n_bacteria - 1]; 
+            this->bacteria[this->n_bacteria - 1] = nullptr; 
+            this->n_bacteria--; 
+        } else {
+            i++; 
+        }
+    }
+}
+
+
+void Simulation::step() {
+    // Proceed to a Simulation step as described in the ARCHITECTURE.md file. 
+
+    // 1. Diffuse nutrients on the Grid 
+    this->grid->diffuse(this->dt, this->diffusion_coeff); 
+
+    // 2. Update each Bacterium state 
+    int initial_pop = this->n_bacteria; 
+    for (int i = 0; i < initial_pop; i++) {
+        // Get current Bacterium 
+        Bacterium* b = this->bacteria[i]; 
+        if (b->state == BacteriumState::DEAD) continue;
+        
+        // Update nutrients 
+        float nut = this->grid->get_nutrient_at(b->position); 
+        // Consume nutrients on the Grid 
+        float intake = std::min(nut, 1.0f); 
+        this->grid->consume_nutrient_at(b->position, intake); 
+        
+        // Update Bacterium 
+        b->update(this->dt, nut); 
+
+        // Wrap Bacterium coordinates of out of range 
+        if (b->position.x >= this->grid->get_n()) {
+            b->position.x = 0; 
+        }
+        if (b->position.y >= this->grid->get_n()) {
+            b->position.y = 0; 
+        }
+
+        // Manage division 
+        if (b->state == BacteriumState::DIVISION) {
+            Bacterium* daughter = b->clone(); 
+            daughter->set_id(this->next_bacterium_id); 
+            this->add_bacteria(daughter); 
+            this->next_bacterium_id++; 
+            
+            // Update mother state 
+            b->state = BacteriumState::ALIVE; 
+        }
+    }
+
+    // 3. Delete DEAD Bacterium 
+    this->delete_dead_bacteria(); 
+    this->current_step++;
+}
+
+
+void Simulation::launch(int total_steps) {
+    // Launch simulation for a total_steps steps
+
+    for (int i = 0; i < total_steps; i++) {
+        // Update hidden state 
+        this->step(); 
+        // Display PetriDish
+        this->display(); 
+    }
 }

@@ -5,7 +5,6 @@ Bacterium::Bacterium() {
     Instanciate a Bacterium object with basic 
     attributes. 
     */
-
     this->position = Vector2(0.0f, 0.0f); 
     this->state = BacteriumState::ALIVE; 
     this->energy = 5; 
@@ -103,7 +102,7 @@ Bacterium* Bacterium::clone() {
         this->energy / 2, 
         this->velocity, 
         this->mutation_prob, 
-        this->id
+        0                           // Put null id for update in Simulation
     ); 
 
     // 2. Change current values 
