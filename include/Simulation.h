@@ -8,20 +8,21 @@
 class Simulation {
     
     private: 
-        Bacterium* bacteria; 
+        Bacterium** bacteria; 
         int n_bacteria; 
         int max_bacteria; 
         Grid* grid; 
         float dt; 
         float diffusion_coeff; 
         uint32_t current_step;
+        uint32_t next_bacterium_id;
 
     public: 
         Simulation(Grid& grid, float dt); 
         Simulation(const Simulation& other); 
         Simulation(const std::string& filepath); 
         ~Simulation(); 
-        void add_bacteria(const Bacterium* b); 
+        void add_bacteria(Bacterium* b); 
         void delete_bacteria(); 
         void step(); 
         void launch(uint32_t total_steps); 
