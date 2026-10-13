@@ -1,9 +1,9 @@
 #ifndef SIMULATION_H
 #define SIMULATION_H
 
-#include "Bacterium.h"
-#include "Grid.h"
-#include "SimulationConfig.h"
+#include "entities/Bacterium.h"
+#include "simulation/Grid.h"
+#include "simulation/SimulationConfig.h"
 #include <string>
 
 class Simulation {

@@ -1,7 +1,7 @@
 #include <string>
 #include <iostream>
-#include "Simulation.h"
-#include "CmdParser.h"
+#include "simulation/Simulation.h"
+#include "io/CmdParser.h"
 
 
 

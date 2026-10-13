@@ -1,8 +1,8 @@
 #ifndef BACTERIUM_H
 #define BACTERIUM_H
 
-#include "Vector2.h"
-#include "Types.h"
+#include "core/Vector2.h"
+#include "core/Types.h"
 #include <stdint.h>
 #include <random>
 #include <math.h>

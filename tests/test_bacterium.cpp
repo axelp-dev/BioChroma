@@ -1,5 +1,5 @@
 #include "TestRunner.h"
-#include "Bacterium.h"
+#include "entities/Bacterium.h"
 #include <iomanip>
 #include <cmath>
 

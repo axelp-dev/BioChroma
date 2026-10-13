@@ -1,7 +1,7 @@
 #include "TestRunner.h"
-#include "SimulationConfig.h"
-#include "Simulation.h"
-#include "Grid.h"
+#include "simulation/SimulationConfig.h"
+#include "simulation/Simulation.h"
+#include "simulation/Grid.h"
 #include <iomanip>
 #include <fstream>
 #include <cstdio>

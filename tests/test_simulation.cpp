@@ -1,7 +1,7 @@
 #include "TestRunner.h"
-#include "Simulation.h"
-#include "Grid.h"
-#include "Vector2.h"
+#include "simulation/Simulation.h"
+#include "simulation/Grid.h"
+#include "core/Vector2.h"
 #include <iomanip>
 #include <fstream>
 #include <stdexcept>

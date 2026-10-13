@@ -1,5 +1,5 @@
 #include "TestRunner.h"
-#include "Vector2.h"
+#include "core/Vector2.h"
 #include <iomanip>
 
 void run_vector2_tests() {

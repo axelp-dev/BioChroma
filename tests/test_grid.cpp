@@ -1,6 +1,6 @@
 #include "TestRunner.h"
-#include "Grid.h"
-#include "Vector2.h"
+#include "simulation/Grid.h"
+#include "core/Vector2.h"
 #include <iomanip>
 #include <stdexcept>
 

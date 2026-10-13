@@ -1,50 +1,40 @@
 # Basic Makefile for BioChroma project
 
 CXX      := g++
-CXXFLAGS := -std=c++20 -Wall -Wextra -Iinclude -fsanitize=address -g -Wno-unknown-pragmas
+CXXFLAGS := -std=c++20 -Wall -Wextra -Iinclude -Iinclude/core -Iinclude/entities -Iinclude/simulation -Iinclude/io -fsanitize=address -g -Wno-unknown-pragmas
 
-# === Get OBJ, SRCS and dependencies === 
-SRCS_ROOT := $(wildcard *.cpp)
-SRCS_SRC  := $(wildcard src/*.cpp)
+# === Sources & Objects ===
+SRCS      := main.cpp $(shell find src -name '*.cpp' ! -name 'Queue.cpp')
+OBJS      := $(patsubst %.cpp, obj/%.o, $(SRCS))
+
 TEST_SRCS := tests/main_test.cpp \
-             tests/test_vector2.cpp src/Vector2.cpp \
-             tests/test_grid.cpp src/Grid.cpp \
-             tests/test_bacterium.cpp src/Bacterium.cpp \
-			 tests/test_simulation.cpp src/Simulation.cpp \
-			 tests/test_simulation_config.cpp
-
-OBJS := $(patsubst %.cpp, obj/%.o, $(SRCS_ROOT)) \
-        $(patsubst src/%.cpp, obj/%.o, $(SRCS_SRC))
+             tests/test_vector2.cpp src/core/Vector2.cpp \
+             tests/test_grid.cpp src/simulation/Grid.cpp \
+             tests/test_bacterium.cpp src/entities/Bacterium.cpp \
+             tests/test_simulation.cpp src/simulation/Simulation.cpp \
+             tests/test_simulation_config.cpp
 
 .PHONY: all clean run test
 
 # Cible par défaut
 all: bin/agar
 
-# === DEFINE COMPILATION RULES ===
-
-# Compile sources from src/
-obj/%.o: src/%.cpp
-	mkdir -p obj
-	$(CXX) $(CXXFLAGS) -c $< -o $@
-
-# Compile root sources (ex. main.cpp)
+# === Compilation rule for any .cpp (root or subfolders) ===
 obj/%.o: %.cpp
-	mkdir -p obj
+	@mkdir -p $(dir $@)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 # Linking main app
 bin/agar: $(OBJS)
-	mkdir -p bin
+	@mkdir -p bin
 	$(CXX) $(CXXFLAGS) $^ -o $@
 
 # Compile and link all tests
 bin/run_tests: $(TEST_SRCS)
-	mkdir -p bin
+	@mkdir -p bin
 	$(CXX) $(CXXFLAGS) -Itests $^ -o $@
 
-# === DEFINE OTHER COMMANDS ===
-
+# === Utility commands ===
 clean:
 	rm -rf obj bin
 

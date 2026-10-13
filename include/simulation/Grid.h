@@ -1,7 +1,7 @@
 #ifndef GRID_H 
 #define GRID_H
 
-#include "Vector2.h"
+#include "core/Vector2.h"
 
 class Grid {
     
