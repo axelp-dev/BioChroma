@@ -20,6 +20,8 @@ void run_simulation_config_tests() {
         ASSERT_TRUE(cfg.total_steps == 50);
         ASSERT_FLOAT_EQ(cfg.dt, 1.0f);
         ASSERT_TRUE(!cfg.headless);
+        ASSERT_TRUE(!cfg.real_time);
+        ASSERT_FLOAT_EQ(cfg.display_delay, 300.0f);
         ASSERT_TRUE(cfg.seed == 0);
         ASSERT_TRUE(cfg.export_csv.empty());
 
@@ -35,12 +37,14 @@ void run_simulation_config_tests() {
         std::cout << "  - Custom & partial constructors    " << std::setw(15) << std::setfill('.') << "";
         int fails = Test::failed_count;
 
-        // Full parameter constructor
-        SimulationConfig full_cfg("custom_path.txt", 120, 0.05f, true, 42, "out.csv");
+        // Full parameter constructor (8 arguments)
+        SimulationConfig full_cfg("custom_path.txt", 120, 0.05f, true, true, 150.0f, 42, "out.csv");
         ASSERT_TRUE(full_cfg.grid_filepath == "custom_path.txt");
         ASSERT_TRUE(full_cfg.total_steps == 120);
         ASSERT_FLOAT_EQ(full_cfg.dt, 0.05f);
         ASSERT_TRUE(full_cfg.headless);
+        ASSERT_TRUE(full_cfg.real_time);
+        ASSERT_FLOAT_EQ(full_cfg.display_delay, 150.0f);
         ASSERT_TRUE(full_cfg.seed == 42);
         ASSERT_TRUE(full_cfg.export_csv == "out.csv");
 
@@ -50,6 +54,8 @@ void run_simulation_config_tests() {
         ASSERT_TRUE(partial_cfg.total_steps == 200);
         ASSERT_FLOAT_EQ(partial_cfg.dt, 0.25f);
         ASSERT_TRUE(!partial_cfg.headless);
+        ASSERT_TRUE(!partial_cfg.real_time);
+        ASSERT_FLOAT_EQ(partial_cfg.display_delay, 300.0f);
         ASSERT_TRUE(partial_cfg.seed == 0);
         ASSERT_TRUE(partial_cfg.export_csv.empty());
 
@@ -65,13 +71,15 @@ void run_simulation_config_tests() {
         std::cout << "  - Copy constructor integrity       " << std::setw(15) << std::setfill('.') << "";
         int fails = Test::failed_count;
 
-        SimulationConfig source("source.txt", 80, 0.02f, true, 1337, "log.csv");
+        SimulationConfig source("source.txt", 80, 0.02f, true, false, 200.0f, 1337, "log.csv");
         SimulationConfig copy(source);
 
         ASSERT_TRUE(copy.grid_filepath == source.grid_filepath);
         ASSERT_TRUE(copy.total_steps == source.total_steps);
         ASSERT_FLOAT_EQ(copy.dt, source.dt);
         ASSERT_TRUE(copy.headless == source.headless);
+        ASSERT_TRUE(copy.real_time == source.real_time);
+        ASSERT_FLOAT_EQ(copy.display_delay, source.display_delay);
         ASSERT_TRUE(copy.seed == source.seed);
         ASSERT_TRUE(copy.export_csv == source.export_csv);
 
@@ -107,16 +115,16 @@ void run_simulation_config_tests() {
                 << "..\n";
         }
 
-        SimulationConfig cfg(tmp_file, 75, 0.04f, true, 99, "metrics.csv");
+        SimulationConfig cfg(tmp_file, 75, 0.04f, true, false, 100.0f, 99, "metrics.csv");
         Simulation sim(cfg);
         std::remove(tmp_file.c_str());
 
-        // Verify config reached the Simulation instance
         ASSERT_TRUE(sim.get_config().total_steps == 75);
         ASSERT_FLOAT_EQ(sim.get_config().dt, 0.04f);
         ASSERT_TRUE(sim.get_config().headless);
+        ASSERT_TRUE(!sim.get_config().real_time);
+        ASSERT_FLOAT_EQ(sim.get_config().display_delay, 100.0f);
 
-        // Verify deep copy preserves internal config
         Simulation sim_copy(sim);
         ASSERT_TRUE(sim_copy.get_config().total_steps == 75);
         ASSERT_FLOAT_EQ(sim_copy.get_config().dt, 0.04f);
