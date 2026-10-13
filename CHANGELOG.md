@@ -6,6 +6,14 @@ Here are listed all the project changes from the initial commit to the last Unre
 ## [Unreleased]
 
 ### Added
+- Integrated `CmdParser` header-only library to provide a structured CLI interface for simulation execution.
+- Added CLI arguments with full validation and formatted `--help` output:
+  - `-g, --grid_filepath` (required): path to the grid scenario file.
+  - `-d, --duration`: total simulation steps (default: 50).
+  - `-t, --dt`: time step duration in seconds (default: 1.0).
+  - `-v, --verbose`: toggle terminal ANSI rendering (default: true).
+  - `-s, --seed`: pseudo-random number generator seed for reproducibility.
+- Wired CLI options directly to `SimulationConfig` instantiation in `main.cpp`.
 - Introduce `SimulationConfig` structure encapsulating simulation execution parameters (`grid_filepath`, `total_steps`, `dt`, `headless`, `seed`, `export_csv`).
 - Add unit test suite for configuration handling (`tests/test_simulation_config.cpp`) covering default state, custom constructors, copy semantics, and engine injection.
 - Add `get_config()` accessor to `Simulation` for state inspection and testing.

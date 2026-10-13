@@ -279,7 +279,10 @@ void Simulation::step() {
         // Get current Bacterium 
         Bacterium* b = this->bacteria[i]; 
         if (b->state == BacteriumState::DEAD) continue;
-        
+
+        // std::cout << "X : " << b->position.x 
+        //     << " | Y : " << b->position.y << std::endl; 
+
         // Update nutrients 
         float nut = this->grid->get_nutrient_at(b->position); 
         // Consume nutrients on the Grid 
@@ -290,10 +293,10 @@ void Simulation::step() {
         b->update(this->config.dt, nut); 
 
         // Wrap Bacterium coordinates of out of range 
-        if (b->position.x >= this->grid->get_n()) {
+        if (b->position.x >= this->grid->get_n() || b->position.x < 0) {
             b->position.x = 0; 
         }
-        if (b->position.y >= this->grid->get_n()) {
+        if (b->position.y >= this->grid->get_n() || b->position.y < 0) {
             b->position.y = 0; 
         }
 
