@@ -4,12 +4,10 @@
 
 int main() {
 
-    std::cout << "Coucou" << std::endl;
-
     // Simulation sim = Simulation("data/grid-examples/oasis_grid10.txt"); 
-    Simulation sim = Simulation("data/grid-examples/islands_grid10.txt"); 
+    // Simulation sim = Simulation("data/grid-examples/islands_grid10.txt"); 
 
-    sim.launch(50); 
+    // sim.launch(50);
 
 
     return 0; 

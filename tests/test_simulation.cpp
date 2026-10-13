@@ -10,7 +10,7 @@
 void run_simulation_tests() {
     std::cout << Test::CYAN << "[SUITE] " << Test::RESET << "Simulation Engine & Config Parsing\n";
 
-    // Test 1 : Erreur sur fichier inexistant
+    // Test 1: Exception thrown on missing scenario file
     {
         std::cout << "  - Missing file exception           " << std::setw(15) << std::setfill('.') << "";
         int fails = Test::failed_count;
@@ -30,7 +30,7 @@ void run_simulation_tests() {
         }
     }
 
-    // Test 2 : Parsing valide depuis un fichier temporaire
+    // Test 2: Valid ASCII scenario parsing from temporary file
     {
         std::cout << "  - ASCII scenario parsing           " << std::setw(15) << std::setfill('.') << "";
         int fails = Test::failed_count;
@@ -55,13 +55,13 @@ void run_simulation_tests() {
 
         Simulation sim(tmp_filepath);
 
-        // Cleaning temporary file
+        // Clean up temporary file
         std::remove(tmp_filepath.c_str());
 
-        // Population attendue : 2 bactéries
+        // Expected population: 2 bacteria
         ASSERT_TRUE(sim.get_population() == 2);
 
-        // Validation de la grille extraite
+        // Validate parsed grid layout
         const Grid* g = sim.get_grid();
         ASSERT_TRUE(g != nullptr);
         ASSERT_TRUE(g->is_obstacle(0, 0));
@@ -76,7 +76,7 @@ void run_simulation_tests() {
         }
     }
 
-    // Test 3 : Redimensionnement dynamique de la capacité (max_bacteria = 20 -> 40)
+    // Test 3: Dynamic capacity expansion beyond initial threshold (20 -> 40)
     {
         std::cout << "  - Dynamic capacity expansion       " << std::setw(15) << std::setfill('.') << "";
         int fails = Test::failed_count;
@@ -84,10 +84,10 @@ void run_simulation_tests() {
         Grid g(6, 1.0f);
         Simulation sim(g, 0.1f);
 
-        // Insérer 25 bactéries pour forcer le doublement de capacité au-delà de 20
+        // Add 25 heap-allocated bacteria to trigger capacity doubling beyond 20
         for (int i = 0; i < 25; ++i) {
-            Bacterium b(Vector2(1.0f, 1.0f), 5.0f, 0.2f, 0.1f, static_cast<uint32_t>(i));
-            sim.add_bacteria(&b);
+            Bacterium* b = new Bacterium(Vector2(1.0f, 1.0f), 5.0f, 0.2f, 0.1f, static_cast<uint32_t>(i));
+            sim.add_bacteria(b);
         }
 
         ASSERT_TRUE(sim.get_population() == 25);

@@ -5,15 +5,24 @@ Here are listed all the project changes from the initial commit to the last Unre
 
 ## [Unreleased]
 
-### Added 
+### Added
+- Introduce `SimulationConfig` structure encapsulating simulation execution parameters (`grid_filepath`, `total_steps`, `dt`, `headless`, `seed`, `export_csv`).
+- Add unit test suite for configuration handling (`tests/test_simulation_config.cpp`) covering default state, custom constructors, copy semantics, and engine injection.
+- Add `get_config()` accessor to `Simulation` for state inspection and testing.
 
-### Changed 
+### Changed
+- Update `Simulation` constructors to accept and propagate `SimulationConfig` instances instead of unbundled parameter lists.
+- Refactor `Simulation(const std::string& filepath)` as a delegating constructor forwarding to `SimulationConfig`.
+- Default `total_steps` argument to 50 in `Simulation(Grid&, float, int)`.
+
+### Fixed
+- Fix stack-allocated bacterium pointer injection in `tests/test_simulation.cpp` by heap-allocating test instances.
+- Fix compiler warning `-Wdeprecated-copy` on `SimulationConfig` by explicitly defaulting copy assignment operator `operator=`.
+- Fix constructor overload resolution errors during `Simulation` test initialization.
 
 ### Deprecated 
 
 ### Removed 
-
-### Fixed 
 
 
 ---

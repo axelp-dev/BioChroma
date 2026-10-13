@@ -6,46 +6,56 @@
 #include <stdexcept>
 #include <cmath>
 
-Simulation::Simulation(Grid& grid, float dt) {
+Simulation::Simulation(Grid& grid, float dt, int total_steps) {
     this->grid = new Grid(grid); 
-    this->dt = dt;
+    
+    // Init config with basic arguments 
+    this->config = SimulationConfig(dt, total_steps); 
+    
+    // Init simulation internal params 
     this->current_step = 0; 
     this->n_bacteria = 0; 
     this->max_bacteria = 20; 
     this->diffusion_coeff = 0.5; 
     this->next_bacterium_id = 0; 
+    
     // Init Bacterium array to 10 elements 
     this->bacteria = new Bacterium*[this->max_bacteria]; 
 }
 
-Simulation::Simulation(const Simulation& other) {
-    this->grid = new Grid(*(other.grid)); 
-    this->dt = other.dt; 
-    this->current_step = other.current_step; 
-    this->n_bacteria = other.n_bacteria; 
-    this->max_bacteria = other.max_bacteria; 
-    this->diffusion_coeff = other.diffusion_coeff;
-    this->next_bacterium_id = other.next_bacterium_id; 
-    // Bacteria array deep-copy 
-    this->bacteria = new Bacterium*[other.max_bacteria]; 
-    for (int i = 0; i < other.n_bacteria; i++) {
-        this->bacteria[i] = other.bacteria[i]; 
+Simulation::Simulation(const Simulation& other)
+    : config(other.config),
+    bacteria(new Bacterium*[other.max_bacteria]),
+    n_bacteria(other.n_bacteria),
+    max_bacteria(other.max_bacteria),
+    grid(other.grid ? new Grid(*(other.grid)) : nullptr),
+    diffusion_coeff(other.diffusion_coeff),
+    current_step(other.current_step),
+    next_bacterium_id(other.next_bacterium_id)
+{
+    for (int i = 0; i < other.n_bacteria; ++i) {
+        this->bacteria[i] = new Bacterium(*(other.bacteria[i]));
     }
 }
 
-Simulation::Simulation(const std::string& filepath) {
+Simulation::Simulation(const std::string& filepath) 
+    : Simulation(SimulationConfig(filepath, 50, 0.1f, false, 0, "")) {
+    // Delegate initialization to SimulationConfig constructor
+}
+
+Simulation::Simulation(const SimulationConfig& config) {
     this->current_step = 0;
     this->grid = nullptr;
     this->max_bacteria = 20;
     this->n_bacteria = 0;
     this->diffusion_coeff = 0.5f;
-    this->dt = 0.1f;
+    this->config = config; 
     this->bacteria = new Bacterium*[this->max_bacteria];
     this->next_bacterium_id = 0; 
 
-    std::ifstream file(filepath);
+    std::ifstream file(this->config.grid_filepath);
     if (!file.is_open()) {
-        throw std::runtime_error("Unable to load file: " + filepath);
+        throw std::runtime_error("Unable to load file: " + this->config.grid_filepath);
     }
 
     int n_value = 0;
@@ -261,7 +271,7 @@ void Simulation::step() {
     // Proceed to a Simulation step as described in the ARCHITECTURE.md file. 
 
     // 1. Diffuse nutrients on the Grid 
-    this->grid->diffuse(this->dt, this->diffusion_coeff); 
+    this->grid->diffuse(this->config.dt, this->diffusion_coeff); 
 
     // 2. Update each Bacterium state 
     int initial_pop = this->n_bacteria; 
@@ -277,7 +287,7 @@ void Simulation::step() {
         this->grid->consume_nutrient_at(b->position, intake); 
         
         // Update Bacterium 
-        b->update(this->dt, nut); 
+        b->update(this->config.dt, nut); 
 
         // Wrap Bacterium coordinates of out of range 
         if (b->position.x >= this->grid->get_n()) {
@@ -305,10 +315,10 @@ void Simulation::step() {
 }
 
 
-void Simulation::launch(int total_steps) {
+void Simulation::launch() {
     // Launch simulation for a total_steps steps
 
-    for (int i = 0; i < total_steps; i++) {
+    for (int i = 0; i < this->config.total_steps; i++) {
         // Update hidden state 
         this->step(); 
         // Display PetriDish

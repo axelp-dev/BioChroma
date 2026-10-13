@@ -3,40 +3,37 @@
 
 #include "Bacterium.h"
 #include "Grid.h"
+#include "SimulationConfig.h"
 #include <string>
 
 class Simulation {
     
     private: 
+        SimulationConfig config; 
         Bacterium** bacteria; 
         int n_bacteria; 
         int max_bacteria; 
         Grid* grid; 
-        float dt; 
         float diffusion_coeff; 
         uint32_t current_step;
         uint32_t next_bacterium_id;
 
     public: 
-        Simulation(Grid& grid, float dt); 
+        Simulation(Grid& grid, float dt, int total_steps = 50); 
         Simulation(const Simulation& other); 
+        Simulation(const SimulationConfig& config); 
         Simulation(const std::string& filepath); 
         ~Simulation(); 
         void add_bacteria(Bacterium* b); 
         void delete_dead_bacteria(); 
         void step(); 
-        void launch(int total_steps); 
+        void launch(); 
         void display(); 
-        // friend class Logger
 
-        // Test methods 
+        // Accessors for testing and inspection
         int get_population() const { return this->n_bacteria; }
         const Grid* get_grid() const { return this->grid; }
+        const SimulationConfig& get_config() const { return this->config; }
 }; 
 
-
-
-
-
-
-#endif 
+#endif
