@@ -34,9 +34,9 @@ Here are presented all the structures and classes used in the project.
 
 **Cell States.** First, we need to define some basic structures. `BacteriumState` defines the current state of a `Bacterium` object: `DIVISION` means that the cell is dividing itself into two parts to produce two clones, and `SPORE` is an available state for `StandardBacterium` objects reached when nearby resources are too low.
 
-**The Grid.** The Petri dish is modeled by an $N \times N$ discrete grid stored in a dynamically allocated `float` array. This grid represents the local concentration of nutrients (e.g. normalized values between `0.0` and `9.0`). It can be initialized from an ASCII `.txt` configuration file where the user specifies bacteria (`=` or `+`), obstacles (`#`), or nutrient levels (`[0-9]`).
+**The Grid.** The Petri dish is modeled by an $N \times N$ discrete grid stored in a dynamically allocated `float` array (`nutrients`). This grid represents the local concentration of nutrients (normalized values between `0.0` and `9.0`), where `-1.0` encodes impenetrable obstacles (`#`). It is initialized directly by the `Simulation` parser from an ASCII configuration file.
 
-> **NOTE**: The `Bacterium` objects are not stored inside the grid cells, but inside a flat `std::vector` within the `Simulation` orchestrator. Bacterial positions are represented in a continuous 2D space ($\mathbb{R}^2$) using `Vector2`.
+> **NOTE**: Bacterial agents are not stored inside the grid cells. The `Simulation` orchestrator manages them on the heap through a dynamic pointer array (`Bacterium** bacteria`) using a Swap & Pop pattern for $\mathcal{O}(1)$ deletions. Continuous spatial coordinates ($\mathbb{R}^2$) are tracked via `Vector2`.
 
 ```cpp
 // Internal states of a bacterium
@@ -120,22 +120,15 @@ classDiagram
         +Grid(const Grid& other)
         +operator=(const Grid& other) Grid&
         +~Grid()
-        +operator()(int x, int y) float&
-        +set(int x, int y, float value) void
-    }
-
-    class PetriDish {
-        -Grid grid
-        -float diffusion_coeff
-        +PetriDish()
-        +PetriDish(const string& filepath)
-        +PetriDish(const PetriDish& other)
-        +operator=(const PetriDish& other) PetriDish&
-        +~PetriDish()
-        +diffuse(float dt) void
+        +set_nutrient(int x, int y, float value) void
+        +put_obstacle(int x, int y) void
+        +is_obstacle(int x, int y) const bool
+        +diffuse(float dt, float diffusion_coeff) void
         +get_nutrient_at(Vector2 pos) const float
         +consume_nutrient_at(Vector2 pos, float amount) void
+        +get_n() const int
     }
+
 
     class Logger {
         -string output_dir
@@ -149,24 +142,31 @@ classDiagram
     }
 
     class Simulation {
-        -vector~Bacterium*~ bacteria
-        -PetriDish environment
+        -Bacterium** bacteria
+        -int n_bacteria
+        -int max_bacteria
+        -uint32_t next_bacterium_id
+        -Grid* grid
         -float dt
+        -float diffusion_coeff
         -uint32_t current_step
-        +Simulation(const PetriDish& dish, float dt)
+        +Simulation(Grid& grid, float dt)
         +Simulation(const Simulation& other)
-        +operator=(const Simulation& other) Simulation&
+        +Simulation(const string& filepath)
         +~Simulation()
+        +add_bacteria(Bacterium* b) void
+        +delete_dead_bacteria() void
         +step() void
-        +launch(uint32_t total_steps, Logger& logger) void
-        friend class Logger
+        +launch(int total_steps) void
+        +display() void
+        +get_population() const int
+        +get_grid() const Grid*
     }
 
     Bacterium <|-- StandardBacterium : inherits
     Bacterium <|-- ChemotacticBacterium : inherits
-    PetriDish *-- Grid : contains
-    Simulation *-- PetriDish : contains
-    Simulation o-- Bacterium : manages (pointers)
+    Simulation *-- Grid : owns (Grid*)
+    Simulation o-- Bacterium : manages (Bacterium**)
     Simulation ..> Logger : uses / friend
     Bacterium ..> BacteriumState : uses
     Bacterium ..> Vector2 : uses
@@ -177,13 +177,13 @@ classDiagram
 ## 3. Data Pipeline
 
 The simulation runs through a discrete-time execution pipeline:
-1. **Initialization**: The initial environment state is parsed from the ASCII file via `PetriDish(filepath)` and seeded with polymorphic `Bacterium` pointers within `Simulation` (driven by the `main()` CLI entry point).
+1. **Initialization**: The configuration file is parsed by `Simulation(filepath)`, allocating the internal `Grid*` buffer and initial `Bacterium*` heap pointers.
 2. **Temporal Step** (`Simulation::step()`):
-2.1 **Diffusion**: The 2D finite-difference diffusion stencil updates nutrient distribution across `Grid` via `PetriDish::diffuse(dt)`.
-2.2 **Agent Updates**: For each bacterium in bacteria, polymorphic behavior is triggered via `b->update(dt, local_nutrient)`. Motility, nutrient intake, and Markov state transitions are executed.
-2.3 **Fission**: Bacteria in `DIVISION` state trigger `b->clone()`, inserting new instances into the collection.
-2.4 **Population Cleanup**: Inactive instances marked as `DEAD` are freed and erased from the pointer vector.
-3. **Telemetry & Output**: The `Logger` streams compact binary snapshots during computation and exports processed `CSV` datasets upon completion for external analysis.
+   - **2.1 Diffusion**: Nutrient diffusion runs across the grid via explicit finite differences (`grid->diffuse(dt, diffusion_coeff)`), preserving obstacle boundaries.
+   - **2.2 Nutrient Intake & Metabolic Update**: Each active bacterium consumes available local nutrients (`grid->consume_nutrient_at`) and executes `b->update(dt, nut)`.
+   - **2.3 Fission**: Cells flagged with `BacteriumState::DIVISION` spawn child instances via `b->clone()`, receiving a unique `next_bacterium_id`.
+   - **2.4 Population Pruning**: Inactive agents flagged as `DEAD` are freed with `delete` and removed in $\mathcal{O}(1)$ using the Swap & Pop method.
+3. **Visualization & Telemetry**: `Simulation::display()` prints ANSI-colored terminal views of the grid, nutrient densities, obstacles, and active agents.
 
 ```mermaid 
 

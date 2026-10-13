@@ -32,33 +32,27 @@
   - Enforce boundary reflections (Neumann conditions) or closed dish constraints.
   - Add unit tests verifying global nutrient mass conservation across successive diffusion steps.
   
-- [ ] *Feature* - Add `Grid` import from `.txt` ASCII file and unit tests associated with `data/examples/examples.txt`. 
+- [x] **Step 2.2 — Core Bacterium Dynamics**
+  - Implement base `Bacterium` agent with randomized step motility and metabolic intake.
+  - Implement Markov state transitions (`ALIVE`, `DIVISION`, `DEAD`, `SPORE`).
+  - Implement cloning mechanism (`clone()`) with energy splitting upon binary fission.
+  - Add unit tests validating motility, cloning, and state stability.
 
-- [ ] **Step 2.2 — Polymorphic Bacterium Hierarchy**
-  - Define the abstract base class `Bacterium` with pure virtual methods (`update`, `clone`) and a virtual destructor.
-  - Implement canonical form (copy constructor, copy assignment operator) for the abstract base class.
-  - Implement `StandardBacterium`: 2D isotropic random walk, baseline metabolic consumption, and transition to `SPORE` upon local starvation.
-  - Implement `ChemotacticBacterium`: local gradient sensing, biased directional walk, and distinct velocity/metabolic parameters.
-  - Write unit tests in `tests/test_bacterium.cpp` validating dynamic dispatch via `Bacterium*` and virtual cloning.
-
-- [ ] **Step 2.3 — Headless Simulation Orchestration**
-  - Implement `Simulation` managing the polymorphic collection (`std::vector<Bacterium*>`).
-  - Implement the core temporal execution step:
-    1. Diffuse environmental nutrients via `PetriDish::diffuse(dt)`.
-    2. Update agents via polymorphic calls (`b->update(dt, local_nutrient)`).
-    3. Process divisions via `b->clone()` and append new agents to the population vector.
-    4. Safely clean up dead agents (`delete` raw pointers followed by `std::erase_if`).
-  - Implement the canonical class form for `Simulation` ensuring deep copies of all heap-allocated agents.
+- [x] **Step 2.3 — Headless Simulation Orchestration**
+  - Implement `Simulation` managing the agent collection via dynamic heap array (`Bacterium**`).
+  - Implement swap-and-pop memory pruning (`delete_dead_bacteria()`) in $\mathcal{O}(1)$.
+  - Implement the core temporal step (`step()`): nutrient diffusion, agent updates, intake, division, and dead cleanup.
+  - Implement ANSI terminal renderer (`display()`) supporting 256-color palettes for nutrient levels and agent states.
 
 ---
 
 ## Phase 3: Telemetry, I/O & Verification (v0.1 -> v0.2)
 
-- [ ] **Step 3.1 — ASCII Configuration Parser**
-  - Implement the `PetriDish(const std::string& filepath)` constructor.
-  - Parse ASCII maps: decode nutrient levels (`0`–`9`), obstacles (`#`), and initial colonies (`S`, `C`).
-  - Instantiate and inject initial polymorphic `Bacterium` pointers based on the map characters.
-
+- [x] **Step 3.1 — ASCII Configuration Parser**
+  - Implement the `Simulation(const std::string& filepath)` constructor.
+  - Parse metadata headers (`N`, `CELL_SIZE`, `DIFFUSION`).
+  - Parse multi-grid matrix sections (`--- NUTRIENTS ---` and `--- BACTERIA ---`).
+  - Ensure robust bounds validation and heap initialization before population injection.
 - [ ] **Step 3.2 — Binary Logging & CSV Conversion**
   - Implement `Logger` to stream binary snapshots (`BacteriumRecord`, `NutrientSnapshot`) per timestep.
   - Implement the post-simulation conversion step generating clean, normalized CSV files (`trajectories.csv`, `nutrients.csv`).
@@ -67,16 +61,3 @@
 - [ ] **Step 3.3 — Python Validation Scripts**
   - Write `scripts/plot_population.py` using Pandas and Matplotlib to plot population curves over time.
   - Write `scripts/plot_heatmap.py` to animate nutrient field consumption alongside agent trajectories.
-
----
-
-## Phase 4: Interactive Viewport (v0.2)
-
-- [ ] **Step 4.1 — Raylib Build Integration**
-  - Link Raylib in `CMakeLists.txt` via `find_package(raylib REQUIRED)` with fallback support.
-- [ ] **Step 4.2 — 2D Rendering Engine**
-  - Implement real-time nutrient grid rendering as a background color heatmap.
-  - Render bacteria as colored discs (e.g. green for `Standard`, cyan for `Chemotactic`, grey for `SPORE`).
-- [ ] **Step 4.3 — Interactive Controls**
-  - Add keyboard toggles (spacebar pause, stepped mode, speed control).
-  - Add mouse interaction to seed nutrients or spawn new bacterial colonies dynamically.

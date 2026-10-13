@@ -42,27 +42,33 @@ and a colored CLI display will present the tests results. Finnally, run `make cl
 ## Architecture Summary 
 
 ```text 
-
 BioChroma/
-├── data                     # Output CSV logs
+├── data                    # Input scenarios and test configs
+│   └── grid-examples/
 ├── docs
-│   ├── ARCHITECTURE.md     # System architecture, classes & data pipeline
-│   └── GUIDELINES.md       # Step-by-step engineering roadmap & task breakdown
-├── include                 # Public headers (Types, Bacterium, PetriDish, Simulation)
-│   ├── Types.h             # Basic struct types 
-│   └── Vector2.h           # Vector2 header
+│   ├── ARCHITECTURE.md     # System architecture, classes & data pipeline
+│   └── GUIDELINES.md       # Step-by-step engineering roadmap & task breakdown
+├── include                 # Public headers
+│   ├── Bacterium.h         # Bacterium agent definition
+│   ├── Grid.h              # Discrete 2D nutrient/obstacle grid
+│   ├── Simulation.h        # Orchestrator & CLI renderer
+│   ├── Types.h             # Basic types and enums (BacteriumState)
+│   └── Vector2.h           # Vector2 algebra
 ├── src
-│   └── Vector2.cpp         # Vector2 implementation
+│   ├── Bacterium.cpp       # Agent dynamics & lifecycle implementation
+│   ├── Grid.cpp            # Grid nutrients, boundaries & diffusion
+│   ├── Simulation.cpp      # File parsing, engine step & ANSI display
+│   └── Vector2.cpp         # Continuous 2D vector calculus
 └── tests
-│   ├── main_test.cpp       # Test launcher 
-│   ├── test_bacterium.cpp  
-│   ├── test_PetriDish.cpp
-│   ├── test_simulation.cpp
-│   ├── test_vector2.cpp    # Units tests for Vector2
-│   └── TestRunner.h        # TestRunner namespace definition
+    ├── main_test.cpp       # Test launcher
+    ├── test_bacterium.cpp  # Bacterium unit tests
+    ├── test_grid.cpp       # Grid indexing & diffusion unit tests
+    ├── test_simulation.cpp # Parser & capacity unit tests
+    ├── test_vector2.cpp    # Vector2 algebra unit tests
+    └── TestRunner.h        # Custom assertions & test harness
 ├── main.cpp                # App entry point
-├── Makefile                # Developer shortcuts
+├── Makefile                # Developer build commands
 ├── README.md
 ├── CHANGELOG.md
-└── scripts                  # Python plotting and validation scripts
+└── scripts
 ```
