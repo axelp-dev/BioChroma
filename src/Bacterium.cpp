@@ -8,7 +8,7 @@ Bacterium::Bacterium() {
     this->position = Vector2(0.0f, 0.0f); 
     this->state = BacteriumState::ALIVE; 
     this->energy = 5; 
-    this->velocity = 0.3; 
+    this->velocity = 1.5; 
     this->mutation_prob = 0.5; 
     this->id = 0; 
 }
@@ -53,7 +53,7 @@ void Bacterium::update(float dt, float local_nutrient) {
         this->position.y += this->velocity * dt * sin(theta); 
 
         // Simply reduce energy with constant function for the precedant move
-        this->energy -= 0.5;    
+        this->energy -= 0.05;
     }
     
     // 2. Nutrient update & energy consumption 
@@ -64,13 +64,13 @@ void Bacterium::update(float dt, float local_nutrient) {
     // Draw a random number 
     float u = dist01(gen);
     // Process decision values 
-    float alpha = 1 - this->energy / 10; 
+    float alpha = (1 - this->energy / 5.0) * dt; 
     float psi = 0; 
     float sigma = 0; 
-    if (this->energy <= 5) {
+    if (this->energy <= 7.5) {
         psi = 0; 
     } else {
-        psi = 0.8 * std::pow(((this->energy - 5) / 5),2); 
+        psi = 0.6 * std::pow(((this->energy - 7.5) / 2.0),2) * dt; 
     }
     if (this->energy < 2) {
         sigma = 0.5 * this->energy / 2; 

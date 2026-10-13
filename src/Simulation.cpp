@@ -278,6 +278,8 @@ void Simulation::step() {
     for (int i = 0; i < initial_pop; i++) {
         // Get current Bacterium 
         Bacterium* b = this->bacteria[i]; 
+        // Saving position 
+        Vector2 old_pos = b->position;
         if (b->state == BacteriumState::DEAD) continue;
 
         // std::cout << "X : " << b->position.x 
@@ -292,14 +294,18 @@ void Simulation::step() {
         // Update Bacterium 
         b->update(this->config.dt, nut); 
 
-        // Wrap Bacterium coordinates of out of range 
-        if (b->position.x >= this->grid->get_n() || b->position.x < 0) {
-            b->position.x = 0; 
-        }
-        if (b->position.y >= this->grid->get_n() || b->position.y < 0) {
-            b->position.y = 0; 
-        }
+        // Wrap Bacterium coordinates to respect Grid boundaries
+        b->position = this->wrap_position(b->position, this->grid->get_n());
 
+        // Manage walls 
+        int cell_x = static_cast<int>(std::floor(b->position.x));
+        int cell_y = static_cast<int>(std::floor(b->position.y));
+
+        if (this->grid->is_obstacle(cell_x, cell_y)) {
+            // Annulation du déplacement si la destination est un mur
+            b->position = old_pos;
+        }
+        
         // Manage division 
         if (b->state == BacteriumState::DIVISION) {
             Bacterium* daughter = b->clone(); 
@@ -315,6 +321,21 @@ void Simulation::step() {
     // 3. Delete DEAD Bacterium 
     this->delete_dead_bacteria(); 
     this->current_step++;
+}
+
+Vector2 Simulation::wrap_position(const Vector2& pos, int N) {
+    /*
+    Wrap Bacterium Vector2 position acroding to Simulation Grid bounds 
+    to prevent for std::error out_of_bounds. 
+    */
+    // Init empty vector for modifs
+    Vector2 vec = pos;
+    float epsilon = 0.2f;
+    if (vec.x >= N - 1) vec.x = N - 1 - epsilon;
+    if (vec.x <= 1)     vec.x = 1.0f + epsilon;
+    if (vec.y >= N - 1) vec.y = N - 1 - epsilon;
+    if (vec.y <= 1)     vec.y = 1.0f + epsilon;
+    return vec;
 }
 
 

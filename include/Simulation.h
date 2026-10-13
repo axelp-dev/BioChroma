@@ -27,6 +27,7 @@ class Simulation {
         void add_bacteria(Bacterium* b); 
         void delete_dead_bacteria(); 
         void step(); 
+        Vector2 wrap_position(const Vector2& pos, int N); 
         void launch(); 
         void display(); 
 

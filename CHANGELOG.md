@@ -6,6 +6,7 @@ Here are listed all the project changes from the initial commit to the last Unre
 ## [Unreleased]
 
 ### Added
+- `Simulation::wrap_position` for `Bacterium` random walks and bouncing for walls. 
 - Integrated `CmdParser` header-only library to provide a structured CLI interface for simulation execution.
 - Added CLI arguments with full validation and formatted `--help` output:
   - `-g, --grid_filepath` (required): path to the grid scenario file.
