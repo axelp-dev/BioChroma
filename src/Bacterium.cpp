@@ -66,19 +66,19 @@ void Bacterium::update(float dt, float local_nutrient) {
     // Process decision values 
     float alpha = (1 - this->energy / 5.0) * dt; 
     float psi = 0; 
-    float sigma = 0; 
+    // float sigma = 0; 
     if (this->energy <= 7.5) {
         psi = 0; 
     } else {
         psi = 0.6 * std::pow(((this->energy - 7.5) / 2.0),2) * dt; 
     }
-    if (this->energy < 2) {
-        sigma = 0.5 * this->energy / 2; 
-    } else if (this->energy <= 5) {
-        sigma = 0.5 * (5 - this->energy) / 3; 
-    } else {
-        sigma = 0; 
-    }
+    // if (this->energy < 2) {
+    //     sigma = 0.5 * this->energy / 2; 
+    // } else if (this->energy <= 5) {
+    //     sigma = 0.5 * (5 - this->energy) / 3; 
+    // } else {
+    //     sigma = 0; 
+    // }
     
     if (u <= psi) {
         // Division : only change BacteriumState. The divison process 

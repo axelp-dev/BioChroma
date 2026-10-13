@@ -1,7 +1,7 @@
 # Basic Makefile for BioChroma project
 
 CXX      := g++
-CXXFLAGS := -std=c++20 -Wall -Wextra -Iinclude -fsanitize=address -g
+CXXFLAGS := -std=c++20 -Wall -Wextra -Iinclude -fsanitize=address -g -Wno-unknown-pragmas
 
 # === Get OBJ, SRCS and dependencies === 
 SRCS_ROOT := $(wildcard *.cpp)

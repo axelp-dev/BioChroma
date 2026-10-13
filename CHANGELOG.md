@@ -6,6 +6,9 @@ Here are listed all the project changes from the initial commit to the last Unre
 ## [Unreleased]
 
 ### Added
+- Added other CLI arguments for simulation display : 
+  - `delay` in ms to wait between each simulation displays 
+  - `real-time` to allow waiting between frames and erase precedent frames. 
 - `Simulation::wrap_position` for `Bacterium` random walks and bouncing for walls. 
 - Integrated `CmdParser` header-only library to provide a structured CLI interface for simulation execution.
 - Added CLI arguments with full validation and formatted `--help` output:

@@ -5,6 +5,8 @@
 #include <string>
 #include <stdexcept>
 #include <cmath>
+#include <chrono>
+#include <thread>
 
 Simulation::Simulation(Grid& grid, float dt, int total_steps) {
     this->grid = new Grid(grid); 
@@ -39,7 +41,7 @@ Simulation::Simulation(const Simulation& other)
 }
 
 Simulation::Simulation(const std::string& filepath) 
-    : Simulation(SimulationConfig(filepath, 50, 0.1f, false, 0, "")) {
+    : Simulation(SimulationConfig(filepath, 50, 0.1f, false, true, 300, 0, "")) {
     // Delegate initialization to SimulationConfig constructor
 }
 
@@ -95,18 +97,16 @@ Simulation::Simulation(const SimulationConfig& config) {
                 ss >> this->diffusion_coeff;
             }
 
-            // Si toutes les métadonnées requises sont lues, allouer la grille
             if (n_value > 0 && !this->grid) {
                 this->grid = new Grid(n_value, cell_size);
             }
-            continue; // Ne pas traiter les lignes d'en-tête comme des cellules !
+            continue;
         }
 
         if (!this->grid) {
             throw std::runtime_error("Grid dimensions (N) must be defined before grid data.");
         }
 
-        // 2. Traitement des lignes de matrices (grid_y)
         for (size_t x = 0; x < line.size() && static_cast<int>(x) < n_value; ++x) {
             char c = line[x];
 
@@ -193,6 +193,14 @@ void Simulation::display() {
     };
 
     int n = this->grid->get_n(); 
+
+    if (this->config.real_time == true && current_step > 1) {
+        // Erase previous display
+        std::cout << "\033[" << n + 5 << "A\r";
+
+        // Put a delay 
+        std::this_thread::sleep_for(std::chrono::milliseconds(static_cast<int64_t>(this->config.display_delay)));
+    }
 
     // Simulation header
     std::cout << "\n" << BOLD << "┌── BioChroma ─────────────────────────────┐" << RESET << "\n";
