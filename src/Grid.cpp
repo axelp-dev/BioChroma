@@ -216,3 +216,14 @@ void Grid::diffuse(float dt, float diffusion_coeff) {
     delete[] this->nutrients;
     this->nutrients = new_nutrients;
 }
+
+float Grid::get_global_energy() {
+    // Process global nutrients amount on the Grid 
+    float sum = 0;
+    for (int i = 0; i < this->N * this->N; i++) {
+        if (this->nutrients[i] > -1) {
+            sum += this->nutrients[i]; 
+        }
+    }
+    return sum; 
+}

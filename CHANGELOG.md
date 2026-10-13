@@ -6,6 +6,7 @@ Here are listed all the project changes from the initial commit to the last Unre
 ## [Unreleased]
 
 ### Added
+- Display amount of nutrients on the Grid during simulation using `Grid::get_global_energy()`. 
 - Added other CLI arguments for simulation display : 
   - `delay` in ms to wait between each simulation displays 
   - `real-time` to allow waiting between frames and erase precedent frames. 

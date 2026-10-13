@@ -196,7 +196,7 @@ void Simulation::display() {
 
     if (this->config.real_time == true && current_step > 1) {
         // Erase previous display
-        std::cout << "\033[" << n + 5 << "A\r";
+        std::cout << "\033[" << n + 6 << "A\r";
 
         // Put a delay 
         std::this_thread::sleep_for(std::chrono::milliseconds(static_cast<int64_t>(this->config.display_delay)));
@@ -206,6 +206,7 @@ void Simulation::display() {
     std::cout << "\n" << BOLD << "┌── BioChroma ─────────────────────────────┐" << RESET << "\n";
     std::cout << "│ Step: " << BOLD << this->current_step << RESET 
               << "\t Population: " << BOLD << this->n_bacteria << RESET << " agents\t   │\n";
+    std::cout << "│ Nutrients : " << BOLD << this->grid->get_global_energy() << "\n"; 
     std::cout << "└" << std::string(n * 2 + 2, '-') << "┘\n";
 
     // Display box
@@ -239,14 +240,16 @@ void Simulation::display() {
                 std::cout << COLOR_WALL << "██" << RESET;
             } else {
                 float val = this->grid->get_nutrient_at(Vector2(static_cast<float>(x), static_cast<float>(y)));
-                int level = static_cast<int>(std::round(val));
-                if (level < 0) level = 0;
-                if (level > 9) level = 9;
-
-                if (level == 0) {
-                    std::cout << DIM << "· " << RESET;
-                } else {
+                
+                if (val >= 1.0f) {
+                    int level = static_cast<int>(std::floor(val));
+                    if (level > 9) level = 9;
                     std::cout << NUTRIENT_COLORS[level] << level << " " << RESET;
+                } else if (val >= 0.01f) {
+                    std::cout << DIM << "~ " << RESET; 
+                } else {
+                    // Vide absolu
+                    std::cout << DIM << "· " << RESET;
                 }
             }
         }
