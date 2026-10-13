@@ -48,6 +48,14 @@ enum class BacteriumState : uint8_t {
 };
 ```
 
+**Modular Subsystems.** The code base is organized into decoupled domain modules:
+- `core/`: Fundamental math structures (`Vector2`), data containers (`Queue<T>`), and common types (`Types.h`).
+- `entities/`: Autonomous biological agents (`Bacterium`, `StandardBacterium`, `ChemotacticBacterium`).
+- `simulation/`: Environment simulation (`Grid`), run configurations (`SimulationConfig`), and engine orchestrator (`Simulation`).
+- `io/`: CLI argument parsing (`CmdParser`) and telemetry logging (`Logger`).
+
+**Generic FIFO Queue.** A standalone dynamic singly linked list `Queue<T>` (defined in `include/core/Queue.h`) handles sequential event pipelines, generation tracking, and telemetry buffers with strict $\mathcal{O}(1)$ push/pop guarantees.
+
 ### 2.2 Class Diagram
 
 **Simulation Objects.** Below are represented all the simulation classes and their inheritance and usage relationships. The main class is `Simulation`, which orchestrates the simulation steps, holding the environment `PetriDish` and managing all polymorphic `Bacterium` instances.
@@ -58,118 +66,122 @@ enum class BacteriumState : uint8_t {
 
 ```mermaid 
 classDiagram
-    class BacteriumState {
-        <<enumeration>>
-        ALIVE
-        DEAD
-        DIVISION
-        SPORE
+    namespace core {
+        class BacteriumState {
+            <<enumeration>>
+            ALIVE
+            DEAD
+            DIVISION
+            SPORE
+        }
+
+        class Vector2 {
+            +float x
+            +float y
+            +Vector2()
+            +Vector2(float x, float y)
+            +operator+(const Vector2& other) const Vector2
+            +operator*(float scalar) const Vector2
+        }
+
+        class Queue~T~ {
+            -Node* head
+            -Node* tail
+            -size_t size_
+            +Queue()
+            +~Queue()
+            +push(const T& value) void
+            +pop() void
+            +front() T&
+            +back() T&
+            +empty() const bool
+            +size() const size_t
+            +clear() void
+        }
     }
 
-    class Vector2 {
-        +float x
-        +float y
-        +Vector2()
-        +Vector2(float x, float y)
-        +Vector2(const Vector2& other)
-        +operator=(const Vector2& other) Vector2&
-        +operator+(const Vector2& other) const Vector2
-        +operator*(float scalar) const Vector2
+    namespace entities {
+        class Bacterium {
+            <<abstract>>
+            #Vector2 position
+            #BacteriumState state
+            #float energy
+            #float velocity
+            #float mutation_prob
+            #uint32_t id
+            +virtual update(float dt, float local_nutrient)* void
+            +virtual clone()* Bacterium*
+            +get_id() const uint32_t
+            +set_id(uint32_t id) void
+        }
+
+        class StandardBacterium {
+            +update(float dt, float local_nutrient) override void
+            +clone() override Bacterium*
+        }
+
+        class ChemotacticBacterium {
+            -float sensing_radius
+            +update(float dt, float local_nutrient) override void
+            +clone() override Bacterium*
+        }
     }
 
-    class Bacterium {
-        <<abstract>>
-        #Vector2 position
-        #BacteriumState state
-        #float energy
-        #float velocity
-        #float mutation_prob
-        #uint32_t id
-        +Bacterium()
-        +Bacterium(const Bacterium& other)
-        +operator=(const Bacterium& other) Bacterium&
-        +virtual ~Bacterium()
-        +virtual update(float dt, float local_nutrient)* void
-        +virtual clone()* Bacterium*
+    namespace simulation {
+        class SimulationConfig {
+            +string grid_filepath
+            +int total_steps
+            +float dt
+            +bool headless
+            +bool real_time
+            +float display_delay
+            +uint32_t seed
+            +string export_csv
+            +SimulationConfig()
+            +SimulationConfig(string, int, float, bool, bool, float, uint32_t, string)
+        }
+
+        class Grid {
+            -int N
+            -float cell_size
+            -float* nutrients
+            +Grid(int n, float cell_sz)
+            +~Grid()
+            +set_nutrient(int x, int y, float value) void
+            +put_obstacle(int x, int y) void
+            +is_obstacle(int x, int y) const bool
+            +diffuse(float dt, float diffusion_coeff) void
+            +get_nutrient_at(Vector2 pos) const float
+            +consume_nutrient_at(Vector2 pos, float amount) void
+            +get_global_energy() const float
+            +get_n() const int
+        }
+
+        class Simulation {
+            -Bacterium** bacteria
+            -int n_bacteria
+            -int max_bacteria
+            -uint32_t next_bacterium_id
+            -Grid* grid
+            -SimulationConfig config
+            -uint32_t current_step
+            +Simulation(const SimulationConfig& config)
+            +Simulation(const string& filepath)
+            +~Simulation()
+            +step() void
+            +launch() void
+            +display() void
+            +wrap_position(const Vector2& pos, int N) Vector2
+        }
     }
 
-    class StandardBacterium {
-        +StandardBacterium()
-        +StandardBacterium(const StandardBacterium& other)
-        +operator=(const StandardBacterium& other) StandardBacterium&
-        +~StandardBacterium() override
-        +update(float dt, float local_nutrient) override void
-        +clone() override Bacterium*
-    }
-
-    class ChemotacticBacterium {
-        -float sensing_radius
-        +ChemotacticBacterium()
-        +ChemotacticBacterium(const ChemotacticBacterium& other)
-        +operator=(const ChemotacticBacterium& other) ChemotacticBacterium&
-        +~ChemotacticBacterium() override
-        +update(float dt, float local_nutrient) override void
-        +clone() override Bacterium*
-    }
-
-    class Grid {
-        -int N
-        -float cell_size
-        -float* nutrients
-        +Grid(int n, float cell_sz)
-        +Grid(const Grid& other)
-        +operator=(const Grid& other) Grid&
-        +~Grid()
-        +set_nutrient(int x, int y, float value) void
-        +put_obstacle(int x, int y) void
-        +is_obstacle(int x, int y) const bool
-        +diffuse(float dt, float diffusion_coeff) void
-        +get_nutrient_at(Vector2 pos) const float
-        +consume_nutrient_at(Vector2 pos, float amount) void
-        +get_n() const int
-    }
-
-
-    class Logger {
-        -string output_dir
-        -uint32_t log_interval
-        +Logger(const string& dir, uint32_t interval)
-        +Logger(const Logger& other)
-        +operator=(const Logger& other) Logger&
-        +~Logger()
-        +log(uint32_t step, const Simulation& sim) void
-        +export_to_csv() void
-    }
-
-    class Simulation {
-        -Bacterium** bacteria
-        -int n_bacteria
-        -int max_bacteria
-        -uint32_t next_bacterium_id
-        -Grid* grid
-        -float dt
-        -float diffusion_coeff
-        -uint32_t current_step
-        +Simulation(Grid& grid, float dt)
-        +Simulation(const Simulation& other)
-        +Simulation(const string& filepath)
-        +~Simulation()
-        +add_bacteria(Bacterium* b) void
-        +delete_dead_bacteria() void
-        +step() void
-        +launch(int total_steps) void
-        +display() void
-        +get_population() const int
-        +get_grid() const Grid*
-    }
-
-    Bacterium <|-- StandardBacterium : inherits
-    Bacterium <|-- ChemotacticBacterium : inherits
-    Simulation *-- Grid : owns (Grid*)
+    Bacterium <|-- StandardBacterium
+    Bacterium <|-- ChemotacticBacterium
+    Bacterium *-- Vector2
+    Bacterium *-- BacteriumState
+    Simulation *-- Grid : owns
+    Simulation *-- SimulationConfig : holds
     Simulation o-- Bacterium : manages (Bacterium**)
-    Simulation ..> Logger : uses / friend
-    Bacterium ..> BacteriumState : uses
-    Bacterium ..> Vector2 : uses
 ```
 
 ---

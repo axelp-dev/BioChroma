@@ -38,37 +38,52 @@ make test
 ```
 and a colored CLI display will present the tests results. Finnally, run `make clean` to delete build files and folders. 
 
-
 ## Architecture Summary 
 
 ```text 
 BioChroma/
-├── data                    # Input scenarios and test configs
+├── bin/                    # Compiled binaries (agar, run_tests)
+├── data/                   # Input scenarios and test configs
 │   └── grid-examples/
-├── docs
+├── docs/
 │   ├── ARCHITECTURE.md     # System architecture, classes & data pipeline
-│   └── GUIDELINES.md       # Step-by-step engineering roadmap & task breakdown
-├── include                 # Public headers
-│   ├── Bacterium.h         # Bacterium agent definition
-│   ├── Grid.h              # Discrete 2D nutrient/obstacle grid
-│   ├── Simulation.h        # Orchestrator & CLI renderer
-│   ├── Types.h             # Basic types and enums (BacteriumState)
-│   └── Vector2.h           # Vector2 algebra
-├── src
-│   ├── Bacterium.cpp       # Agent dynamics & lifecycle implementation
-│   ├── Grid.cpp            # Grid nutrients, boundaries & diffusion
-│   ├── Simulation.cpp      # File parsing, engine step & ANSI display
-│   └── Vector2.cpp         # Continuous 2D vector calculus
-└── tests
-    ├── main_test.cpp       # Test launcher
-    ├── test_bacterium.cpp  # Bacterium unit tests
-    ├── test_grid.cpp       # Grid indexing & diffusion unit tests
-    ├── test_simulation.cpp # Parser & capacity unit tests
-    ├── test_vector2.cpp    # Vector2 algebra unit tests
-    └── TestRunner.h        # Custom assertions & test harness
-├── main.cpp                # App entry point
-├── Makefile                # Developer build commands
-├── README.md
+│   ├── GUIDELINES.md       # Step-by-step engineering roadmap & task breakdown
+│   ├── MATHEMATICS.md      # Differential equations & stochastic formalisms
+│   ├── PRESENTATION.md     # Project overview & slide summaries
+│   └── QUEUE.md            # Generic Queue data structure specification
+├── include/                # Modular public headers
+│   ├── core/               # Math algebra, types, and generic data structures
+│   │   ├── Queue.h         # Generic template FIFO container
+│   │   ├── Types.h         # Common enumerations (BacteriumState)
+│   │   └── Vector2.h       # 2D continuous space vector algebra
+│   ├── entities/           # Simulation autonomous agents
+│   │   └── Bacterium.h     # Base & polymorphic bacterium agent interface
+│   ├── io/                 # Input parsing & logging utilities
+│   │   ├── CmdParser.h     # Header-only CLI argument parser
+│   │   └── Logger.h        # Telemetry & metrics logging interface
+│   └── simulation/         # Core orchestrator & environmental layer
+│       ├── Grid.h          # Discrete 2D nutrient/obstacle grid
+│       ├── Simulation.h    # Engine step loop & ANSI terminal visualizer
+│       └── SimulationConfig.h # Execution configuration encapsulation
+├── src/                    # Source files grouped by functional domain
+│   ├── core/
+│   │   ├── Queue.cpp       # Explicit instantiations / queue utilities
+│   │   └── Vector2.cpp
+│   ├── entities/
+│   │   └── Bacterium.cpp
+│   └── simulation/
+│       ├── Grid.cpp
+│       └── Simulation.cpp
+├── tests/                  # Unit test suites & assertions runner
+│   ├── main_test.cpp       # Main test harness runner
+│   ├── test_bacterium.cpp
+│   ├── test_grid.cpp
+│   ├── test_simulation.cpp
+│   ├── test_simulation_config.cpp
+│   ├── test_vector2.cpp
+│   └── TestRunner.h
+├── main.cpp                # CLI entry point
+├── Makefile                # Build system (app, tests, sanitizer)
 ├── CHANGELOG.md
-└── scripts
+└── README.md
 ```

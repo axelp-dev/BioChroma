@@ -24,6 +24,13 @@ Here are listed all the project changes from the initial commit to the last Unre
 - Add `get_config()` accessor to `Simulation` for state inspection and testing.
 
 ### Changed
+- Reorganized source tree and headers into domain subdirectories:
+  - `include/core/` and `src/core/` (`Vector2`, `Queue`, `Types`).
+  - `include/entities/` and `src/entities/` (`Bacterium`).
+  - `include/simulation/` and `src/simulation/` (`Grid`, `Simulation`, `SimulationConfig`).
+  - `include/io/` (`CmdParser`, `Logger`).
+- Updated `Makefile` with generic recursive compilation rules supporting arbitrary nested subdirectories in `src/`.
+- Updated test runner sources (`TEST_SRCS`) to target modular paths.
 - Update `Simulation` constructors to accept and propagate `SimulationConfig` instances instead of unbundled parameter lists.
 - Refactor `Simulation(const std::string& filepath)` as a delegating constructor forwarding to `SimulationConfig`.
 - Default `total_steps` argument to 50 in `Simulation(Grid&, float, int)`.
