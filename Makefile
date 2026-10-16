@@ -4,7 +4,7 @@ CXX      := g++
 CXXFLAGS := -std=c++20 -Wall -Wextra -Iinclude -Iinclude/core -Iinclude/entities -Iinclude/simulation -Iinclude/io -fsanitize=address -g -Wno-unknown-pragmas
 
 # === Sources & Objects ===
-SRCS      := main.cpp $(shell find src -name '*.cpp' ! -name 'Queue.cpp')
+SRCS      := main.cpp $(shell find src -name '*.cpp')
 OBJS      := $(patsubst %.cpp, obj/%.o, $(SRCS))
 
 TEST_SRCS := tests/main_test.cpp \
@@ -12,7 +12,8 @@ TEST_SRCS := tests/main_test.cpp \
              tests/test_grid.cpp src/simulation/Grid.cpp \
              tests/test_bacterium.cpp src/entities/Bacterium.cpp \
              tests/test_simulation.cpp src/simulation/Simulation.cpp \
-             tests/test_simulation_config.cpp
+             tests/test_simulation_config.cpp \
+			 tests/test_queue.cpp 
 
 .PHONY: all clean run test
 
