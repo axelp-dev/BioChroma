@@ -38,7 +38,7 @@ void run_simulation_config_tests() {
         int fails = Test::failed_count;
 
         // Full parameter constructor (8 arguments)
-        SimulationConfig full_cfg("custom_path.txt", 120, 0.05f, true, true, 150.0f, 42, "out.csv");
+        SimulationConfig full_cfg("custom_path.txt", 120, 0.05f, true, true, 150.0f, 42, "out.csv", true);
         ASSERT_TRUE(full_cfg.grid_filepath == "custom_path.txt");
         ASSERT_TRUE(full_cfg.total_steps == 120);
         ASSERT_FLOAT_EQ(full_cfg.dt, 0.05f);
@@ -47,6 +47,7 @@ void run_simulation_config_tests() {
         ASSERT_FLOAT_EQ(full_cfg.display_delay, 150.0f);
         ASSERT_TRUE(full_cfg.seed == 42);
         ASSERT_TRUE(full_cfg.export_csv == "out.csv");
+        ASSERT_TRUE(full_cfg.save_simulation == true);
 
         // Partial constructor used for manual grid injection
         SimulationConfig partial_cfg(0.25f, 200);
@@ -71,7 +72,7 @@ void run_simulation_config_tests() {
         std::cout << "  - Copy constructor integrity       " << std::setw(15) << std::setfill('.') << "";
         int fails = Test::failed_count;
 
-        SimulationConfig source("source.txt", 80, 0.02f, true, false, 200.0f, 1337, "log.csv");
+        SimulationConfig source("source.txt", 80, 0.02f, true, false, 200.0f, 1337, "log.csv", false);
         SimulationConfig copy(source);
 
         ASSERT_TRUE(copy.grid_filepath == source.grid_filepath);
@@ -82,6 +83,7 @@ void run_simulation_config_tests() {
         ASSERT_FLOAT_EQ(copy.display_delay, source.display_delay);
         ASSERT_TRUE(copy.seed == source.seed);
         ASSERT_TRUE(copy.export_csv == source.export_csv);
+        ASSERT_TRUE(copy.save_simulation == source.save_simulation);
 
         // Mutate source to verify value independence
         source.total_steps = 999;
@@ -115,7 +117,7 @@ void run_simulation_config_tests() {
                 << "..\n";
         }
 
-        SimulationConfig cfg(tmp_file, 75, 0.04f, true, false, 100.0f, 99, "metrics.csv");
+        SimulationConfig cfg(tmp_file, 75, 0.04f, true, false, 100.0f, 99, "metrics.csv", true);
         Simulation sim(cfg);
         std::remove(tmp_file.c_str());
 

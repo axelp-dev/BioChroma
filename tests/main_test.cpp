@@ -6,6 +6,8 @@ void run_bacterium_tests();
 void run_simulation_tests();
 void run_simulation_config_tests(); 
 void run_queue_tests(); 
+void run_stats_tests(); 
+
 
 int main() {
     std::cout << Test::BOLD << "\n================ Running BioChroma Tests ================\n\n" << Test::RESET;
@@ -16,6 +18,7 @@ int main() {
     run_simulation_tests(); 
     run_simulation_config_tests(); 
     run_queue_tests(); 
+    run_stats_tests(); 
 
     std::cout << "\n---------------------------------------------------------\n";
     int total = Test::passed_count + Test::failed_count;

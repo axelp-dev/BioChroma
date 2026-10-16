@@ -16,7 +16,8 @@ void run_bacterium_tests() {
         ASSERT_FLOAT_EQ(b1.position.x, 0.0f);
         ASSERT_FLOAT_EQ(b1.position.y, 0.0f);
 
-        Bacterium b2(Vector2(2.5f, 3.5f), 8.0f, 0.5f, 0.1f, 42);
+        // parent_id = 0 pour une cellule initiale
+        Bacterium b2(Vector2(2.5f, 3.5f), 8.0f, 0.5f, 0.1f, 0);
         ASSERT_TRUE(b2.state == BacteriumState::ALIVE);
         ASSERT_FLOAT_EQ(b2.position.x, 2.5f);
         ASSERT_FLOAT_EQ(b2.position.y, 3.5f);
@@ -28,19 +29,18 @@ void run_bacterium_tests() {
         }
     }
 
-    // Test 2 : Moving and speed 
+    // Test 2 : Moving and speed
     {
         std::cout << "  - Motility & step displacement     " << std::setw(15) << std::setfill('.') << "";
         int fails = Test::failed_count;
 
         Vector2 start_pos(1.0f, 1.0f);
         float vel = 0.4f;
-        float dt = 0.5f; // Theorical step : 0.4 * 0.5 = 0.2
-        Bacterium b(start_pos, 5.0f, vel, 0.0f, 1);
+        float dt = 0.5f;
+        Bacterium b(start_pos, 5.0f, vel, 0.0f, 0);
 
         b.update(dt, 0.5f);
 
-        // Check distance : ||r - r0|| == vel * dt
         float dx = b.position.x - start_pos.x;
         float dy = b.position.y - start_pos.y;
         float dist = std::sqrt(dx * dx + dy * dy);
@@ -54,20 +54,18 @@ void run_bacterium_tests() {
         }
     }
 
-    // Test 3 : Clone fission and energy conservation
+    // Test 3 : Clone lineage tracking
     {
-        std::cout << "  - Clone allocation & energy split  " << std::setw(15) << std::setfill('.') << "";
+        std::cout << "  - Clone allocation & parent link   " << std::setw(15) << std::setfill('.') << "";
         int fails = Test::failed_count;
 
         Vector2 pos(4.0f, 2.0f);
-        Bacterium mother(pos, 8.0f, 0.2f, 0.05f, 10);
+        Bacterium mother(pos, 8.0f, 0.2f, 0.05f, 0);
+        mother.set_id(42);
 
         Bacterium* daughter = mother.clone();
 
-        // Check allocation
         ASSERT_TRUE(daughter != nullptr);
-
-        // Same position for child and mother
         ASSERT_FLOAT_EQ(daughter->position.x, pos.x);
         ASSERT_FLOAT_EQ(daughter->position.y, pos.y);
 
@@ -80,13 +78,13 @@ void run_bacterium_tests() {
         }
     }
 
-    // Test 4 : Spores don't move 
+    // Test 4 : Spores dormancy
     {
         std::cout << "  - Spore dormancy invariance        " << std::setw(15) << std::setfill('.') << "";
         int fails = Test::failed_count;
 
         Vector2 fixed_pos(3.0f, 3.0f);
-        Bacterium b(fixed_pos, 2.0f, 0.5f, 0.0f, 2);
+        Bacterium b(fixed_pos, 2.0f, 0.5f, 0.0f, 0);
         b.state = BacteriumState::SPORE;
 
         b.update(1.0f, 0.0f);

@@ -86,7 +86,8 @@ void run_simulation_tests() {
 
         // Add 25 heap-allocated bacteria to trigger capacity doubling beyond 20
         for (int i = 0; i < 25; ++i) {
-            Bacterium* b = new Bacterium(Vector2(1.0f, 1.0f), 5.0f, 0.2f, 0.1f, static_cast<uint32_t>(i));
+            Bacterium* b = new Bacterium(Vector2(1.0f, 1.0f), 5.0f, 0.2f, 0.1f, 0);
+            b->set_id(static_cast<uint32_t>(i));
             sim.add_bacteria(b);
         }
 
