@@ -35,15 +35,14 @@ class Stats {
     private: 
         // Queue Bacterium record 
         Queue<BacteriumRecord>* queue; 
-        // Output folder filepath 
-        std::string output_folder; 
         // SimulationConfig object for post-logging 
         SimulationConfig config; 
     
     public: 
         // Constructors
         Stats(); 
-        Stats(const SimulationConfig& config, std::string output); 
+        Stats(const Stats& other); 
+        Stats(const SimulationConfig& config); 
         ~Stats(); 
 
         // I/O

@@ -44,6 +44,9 @@ class Bacterium {
         void set_birth_step(uint32_t n_step) {
             this->record->birth_step = n_step; 
         }
+        BacteriumRecord* get_record() {
+            return this->record; 
+        }
 }; 
 
 

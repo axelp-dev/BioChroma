@@ -13,6 +13,7 @@ struct SimulationConfig {
     float display_delay = 300.0f; 
     uint32_t seed = 0;
     std::string export_csv = "";
+    bool save_simulation = true; 
 
     // Default constructor
     SimulationConfig() = default;
@@ -20,7 +21,17 @@ struct SimulationConfig {
     SimulationConfig(const SimulationConfig& other) = default;
     SimulationConfig& operator=(const SimulationConfig& other) = default;
 
-    SimulationConfig(std::string grid_filepath, int total_steps, float dt, bool headless, bool real_time, float delay, uint32_t seed, std::string export_csv) 
+    SimulationConfig(
+        std::string grid_filepath, 
+        int total_steps, 
+        float dt, 
+        bool headless, 
+        bool real_time, 
+        float delay, 
+        uint32_t seed, 
+        std::string export_csv,
+        bool save_simulation) 
+
         : grid_filepath(grid_filepath), 
         total_steps(total_steps), 
         dt(dt), 
@@ -28,8 +39,9 @@ struct SimulationConfig {
         real_time(real_time), 
         display_delay(delay),
         seed(seed), 
-        export_csv(export_csv) {}; 
-
+        export_csv(export_csv), 
+        save_simulation(save_simulation)
+        {};  
     
     SimulationConfig(float dt, int total_steps) {
         // Constructor used for grid initialization

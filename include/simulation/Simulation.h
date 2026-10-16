@@ -4,6 +4,7 @@
 #include "entities/Bacterium.h"
 #include "simulation/Grid.h"
 #include "simulation/SimulationConfig.h"
+#include "stats/Stats.h"
 #include <string>
 
 class Simulation {
@@ -17,6 +18,7 @@ class Simulation {
         float diffusion_coeff; 
         uint32_t current_step;
         uint32_t next_bacterium_id;
+        Stats* stats; 
 
     public: 
         Simulation(Grid& grid, float dt, int total_steps = 50); 
