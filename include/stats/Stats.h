@@ -4,6 +4,7 @@
 #include "core/Queue.h"
 #include "simulation/SimulationConfig.h"
 #include "string"
+#include <iostream>
 
 // Define Bacterium record container for Queue elements 
 struct BacteriumRecord {
@@ -33,7 +34,7 @@ class Stats {
 
     private: 
         // Queue Bacterium record 
-        Queue<BacteriumRecord> queue; 
+        Queue<BacteriumRecord>* queue; 
         // Output folder filepath 
         std::string output_folder; 
         // SimulationConfig object for post-logging 
@@ -42,11 +43,11 @@ class Stats {
     public: 
         // Constructors
         Stats(); 
-        Stats(SimulationConfig config, std::string ouput); 
+        Stats(const SimulationConfig& config, std::string output); 
         ~Stats(); 
 
         // I/O
-        void insert(const BacteriumRecord& record) {}; 
+        void insert(const BacteriumRecord& record); 
         void save();
 }; 
 
