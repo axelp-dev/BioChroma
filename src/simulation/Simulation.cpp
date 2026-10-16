@@ -23,6 +23,9 @@ Simulation::Simulation(Grid& grid, float dt, int total_steps) {
     
     // Init Bacterium array to 10 elements 
     this->bacteria = new Bacterium*[this->max_bacteria]; 
+
+    // Init Stats object 
+    this->stats = new Stats(); 
 }
 
 Simulation::Simulation(const Simulation& other)
@@ -38,10 +41,13 @@ Simulation::Simulation(const Simulation& other)
     for (int i = 0; i < other.n_bacteria; ++i) {
         this->bacteria[i] = new Bacterium(*(other.bacteria[i]));
     }
+    
+    // Copy stats object 
+    this->stats = other.stats ? new Stats(*(other.stats)) : nullptr;
 }
 
 Simulation::Simulation(const std::string& filepath) 
-    : Simulation(SimulationConfig(filepath, 50, 0.1f, false, true, 300, 0, "")) {
+    : Simulation(SimulationConfig(filepath, 50, 0.1f, false, true, 300, 0, "", true)) {
     // Delegate initialization to SimulationConfig constructor
 }
 
@@ -54,6 +60,9 @@ Simulation::Simulation(const SimulationConfig& config) {
     this->config = config; 
     this->bacteria = new Bacterium*[this->max_bacteria];
     this->next_bacterium_id = 0; 
+
+    // Init Stats module 
+    this->stats = new Stats(config); 
 
     std::ifstream file(this->config.grid_filepath);
     if (!file.is_open()) {
@@ -133,12 +142,13 @@ Simulation::Simulation(const SimulationConfig& config) {
     file.close();
 }
 
-
 Simulation::~Simulation() {
     // Delete Bacteria array 
     delete[] this->bacteria; 
     // Call Grid destructor
     delete this->grid; 
+    // Delete stats module 
+    delete this->stats; 
 }
 
 void Simulation::add_bacteria(Bacterium* b) {
@@ -266,6 +276,13 @@ void Simulation::delete_dead_bacteria() {
     while (i < this->n_bacteria) {
         // Check if the bacteria is DEAD 
         if (this->bacteria[i]->state == BacteriumState::DEAD) {
+            
+            // Add Bacteria to Stats Queue 
+            BacteriumRecord* record = this->bacteria[i]->get_record(); 
+            // Update record content 
+            record->death_step = this->current_step; 
+            this->stats->insert(*record); 
+            
             // Exchange this Bacterium with the last one 
             delete this->bacteria[i]; 
             this->bacteria[i] = this->bacteria[this->n_bacteria - 1]; 

@@ -69,6 +69,11 @@ void Bacterium::update(float dt, float local_nutrient) {
     // Get nutrients from the grid 
     this->energy += local_nutrient; 
 
+    // Update record max_energy_reached 
+    if (this->record->max_energy_reached < this->energy) {
+        this->record->max_energy_reached = this->energy; 
+    }
+
     // 3. Change state 
     // Draw a random number 
     float u = dist01(gen);

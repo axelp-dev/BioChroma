@@ -5,14 +5,21 @@ Stats::Stats() {
     // Default constructor 
     // Init Queue storage 
     this->queue = new Queue<BacteriumRecord>(); 
-    this->output_folder = ""; 
     this->config = SimulationConfig(); 
 }
 
-Stats::Stats(const SimulationConfig& config, std::string output) {
+Stats::Stats(const Stats& other) 
+    : config(other.config) {
+    if (other.queue != nullptr) {
+        this->queue = new Queue<BacteriumRecord>(*(other.queue));
+    } else {
+        this->queue = new Queue<BacteriumRecord>();
+    }
+}
+
+Stats::Stats(const SimulationConfig& config) {
     // Init Queue storage 
     this->queue = new Queue<BacteriumRecord>(); 
-    this->output_folder = output; 
     // Copy simulation config for post logging
     this->config = config; 
 }
