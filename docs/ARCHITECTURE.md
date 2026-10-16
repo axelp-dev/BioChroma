@@ -3,6 +3,7 @@
 > This document describes the system architecture, class relationships, and data pipeline of the project.
 
 ## Table of Contents
+
 - [BioChroma Pipeline and Architecture Description](#biochroma-pipeline-and-architecture-description)
   - [Table of Contents](#table-of-contents)
   - [1. Project Overview](#1-project-overview)
@@ -53,6 +54,7 @@ enum class BacteriumState : uint8_t {
 - `entities/`: Autonomous biological agents (`Bacterium`, `StandardBacterium`, `ChemotacticBacterium`).
 - `simulation/`: Environment simulation (`Grid`), run configurations (`SimulationConfig`), and engine orchestrator (`Simulation`).
 - `io/`: CLI argument parsing (`CmdParser`) and telemetry logging (`Logger`).
+- `stats/`: Telemetry collector (`Stats`) and lineage data structures (`BacteriumRecord`).
 
 **Generic FIFO Queue.** A standalone dynamic singly linked list `Queue<T>` (defined in `include/core/Queue.h`) handles sequential event pipelines, generation tracking, and telemetry buffers with strict $\mathcal{O}(1)$ push/pop guarantees.
 
@@ -67,36 +69,40 @@ enum class BacteriumState : uint8_t {
 ```mermaid 
 classDiagram
     namespace core {
-        class BacteriumState {
-            <<enumeration>>
-            ALIVE
-            DEAD
-            DIVISION
-            SPORE
-        }
-
         class Vector2 {
             +float x
             +float y
-            +Vector2()
-            +Vector2(float x, float y)
             +operator+(const Vector2& other) const Vector2
             +operator*(float scalar) const Vector2
         }
-
         class Queue~T~ {
             -Node* head
             -Node* tail
             -size_t size_
-            +Queue()
-            +~Queue()
             +push(const T& value) void
             +pop() void
             +front() T&
-            +back() T&
             +empty() const bool
-            +size() const size_t
             +clear() void
+        }
+    }
+
+    namespace stats {
+        class BacteriumRecord {
+            +uint32_t id
+            +uint32_t parent_id
+            +uint32_t birth_step
+            +uint32_t death_step
+            +float max_energy_reached
+            +BacteriumRecord(uint32_t, uint32_t, uint32_t)
+        }
+        class Stats {
+            -Queue~BacteriumRecord~* queue
+            -string output_folder
+            -SimulationConfig config
+            +Stats(const SimulationConfig&, string)
+            +insert(const BacteriumRecord& record) void
+            +save() void
         }
     }
 
@@ -108,11 +114,10 @@ classDiagram
             #float energy
             #float velocity
             #float mutation_prob
-            #uint32_t id
+            #BacteriumRecord* record
             +virtual update(float dt, float local_nutrient)* void
             +virtual clone()* Bacterium*
-            +get_id() const uint32_t
-            +set_id(uint32_t id) void
+            +get_record() BacteriumRecord*
         }
 
         class StandardBacterium {
@@ -137,50 +142,38 @@ classDiagram
             +float display_delay
             +uint32_t seed
             +string export_csv
-            +SimulationConfig()
-            +SimulationConfig(string, int, float, bool, bool, float, uint32_t, string)
+            +bool save_simulation
+            +SimulationConfig(..., bool save_simulation)
         }
 
         class Grid {
-            -int N
-            -float cell_size
             -float* nutrients
-            +Grid(int n, float cell_sz)
-            +~Grid()
-            +set_nutrient(int x, int y, float value) void
-            +put_obstacle(int x, int y) void
-            +is_obstacle(int x, int y) const bool
             +diffuse(float dt, float diffusion_coeff) void
             +get_nutrient_at(Vector2 pos) const float
             +consume_nutrient_at(Vector2 pos, float amount) void
-            +get_global_energy() const float
-            +get_n() const int
         }
 
         class Simulation {
             -Bacterium** bacteria
             -int n_bacteria
-            -int max_bacteria
-            -uint32_t next_bacterium_id
             -Grid* grid
             -SimulationConfig config
-            -uint32_t current_step
-            +Simulation(const SimulationConfig& config)
-            +Simulation(const string& filepath)
-            +~Simulation()
+            -Stats* stats
             +step() void
             +launch() void
-            +display() void
-            +wrap_position(const Vector2& pos, int N) Vector2
+            +delete_dead_bacteria() void
         }
     }
 
     Bacterium <|-- StandardBacterium
     Bacterium <|-- ChemotacticBacterium
     Bacterium *-- Vector2
-    Bacterium *-- BacteriumState
+    Bacterium *-- BacteriumRecord : tracks
+    Stats *-- BacteriumRecord : buffers
+    Stats *-- Queue~BacteriumRecord~ : uses
     Simulation *-- Grid : owns
     Simulation *-- SimulationConfig : holds
+    Simulation *-- Stats : owns
     Simulation o-- Bacterium : manages (Bacterium**)
 ```
 
@@ -189,16 +182,15 @@ classDiagram
 ## 3. Data Pipeline
 
 The simulation runs through a discrete-time execution pipeline:
-1. **Initialization**: The configuration file is parsed by `Simulation(filepath)`, allocating the internal `Grid*` buffer and initial `Bacterium*` heap pointers.
+1. **Initialization**: The configuration file is parsed by `Simulation(filepath)`, allocating the internal `Grid*` buffer, the `Stats*` module, and initial `Bacterium*` heap pointers.
 2. **Temporal Step** (`Simulation::step()`):
    - **2.1 Diffusion**: Nutrient diffusion runs across the grid via explicit finite differences (`grid->diffuse(dt, diffusion_coeff)`), preserving obstacle boundaries.
-   - **2.2 Nutrient Intake & Metabolic Update**: Each active bacterium consumes available local nutrients (`grid->consume_nutrient_at`) and executes `b->update(dt, nut)`.
-   - **2.3 Fission**: Cells flagged with `BacteriumState::DIVISION` spawn child instances via `b->clone()`, receiving a unique `next_bacterium_id`.
-   - **2.4 Population Pruning**: Inactive agents flagged as `DEAD` are freed with `delete` and removed in $\mathcal{O}(1)$ using the Swap & Pop method.
-3. **Visualization & Telemetry**: `Simulation::display()` prints ANSI-colored terminal views of the grid, nutrient densities, obstacles, and active agents.
+   - **2.2 Nutrient Intake & Metabolic Update**: Each active bacterium consumes available local nutrients (`grid->consume_nutrient_at`) and executes `b->update(dt, nut)`. The bacterium updates its internal `BacteriumRecord` with its new energy peak.
+   - **2.3 Fission**: Cells flagged with `BacteriumState::DIVISION` spawn child instances via `b->clone()`, receiving a unique `next_bacterium_id` and passing their current ID as `parent_id`.
+   - **2.4 Population Pruning**: `delete_dead_bacteria()` isolates inactive agents. Before `delete` is called, the simulation extracts the `BacteriumRecord`, assigns the exact `death_step`, and pushes it to the `Stats` queue. The pointer is then removed in $\mathcal{O}(1)$ using Swap & Pop.
+3. **Visualization & Telemetry**: `Simulation::display()` prints ANSI-colored terminal views. Upon termination, `Stats::save()` pops all accumulated records to serialize the complete lineage into a CSV format.
 
 ```mermaid 
-
 flowchart TD
     Config[(CLI Flags / ASCII .txt)] -->|Init Params| Init[Simulation Initialization]
 
@@ -207,16 +199,19 @@ flowchart TD
         Diffuse --> Markov[2. Random Walk & Markov Transitions]
         Markov --> Consume[3. Nutrient Uptake & Energy Consumption]
         Consume --> Events{Division or Death?}
-        Events -->|Yes| UpdatePop[Vector Update: delete DEAD / clone instances]
-        Events -->|No| CheckExport
-        UpdatePop --> CheckExport{t % log_interval == 0 ?}
+        Events -->|Yes, Division| Clone[Clone agent & Init new BacteriumRecord]
+        Events -->|Yes, Death| FinalizeRecord[Add death_step & Push to Stats Queue]
+        FinalizeRecord --> DeletePop[Delete agent & Swap/Pop array]
+        Clone --> CheckEnd
+        DeletePop --> CheckEnd
+        Events -->|No| CheckEnd
     end
 
-    CheckExport -->|No| NextStep[t = t + dt]
-    CheckExport -->|Yes| ExportBinary[(Binary Snapshots: pop, nutrients)]
-    ExportBinary --> NextStep
+    CheckEnd{t < total_steps?}
+    CheckEnd -->|Yes| NextStep[t = t + dt]
     NextStep --> Diffuse
 
-    ExportBinary -.->|Post-run conversion| ExportCSV[(CSV Datasets)]
-    ExportCSV -.->|Python Analysis| PyPlots[Plots & Metrics]
+    CheckEnd -->|No| ExportCSV[("Stats::save() CSV Export")]
+    ExportCSV -.->|Python Analysis| PyPlots[Lineage Plots & Metrics]
 ```
+

@@ -6,6 +6,8 @@ Here are listed all the project changes from the initial commit to the last Unre
 ## [Unreleased]
 
 ### Added
+- Stats Module: Implemented a standalone telemetry collector that encapsulates the event history queue, decoupling data logging from the core simulation engine.
+- BacteriumRecord: Introduced a lightweight data structure to track agent lineage (`id`, `parent_id`) and lifecycle metrics (`birth_step`, `death_step`, `max_energy_reached`).
 - Implements FIFO Queue as template in `include/Queue.h` for statistic module and pst-simulation analytics (future `stats` module). Every operators and methods are described in [docs/QUEUE.md](docs/QUEUE.md). 
 - Display amount of nutrients on the Grid during simulation using `Grid::get_global_energy()`. 
 - Added other CLI arguments for simulation display : 
@@ -25,6 +27,9 @@ Here are listed all the project changes from the initial commit to the last Unre
 - Add `get_config()` accessor to `Simulation` for state inspection and testing.
 
 ### Changed
+- Bacterium: Updated the constructor to accept `parent_id` and automatically initialize an internal `BacteriumRecord` upon instantiation.
+- SimulationConfig: Added a `save_simulation` boolean flag to the primary constructor parameters.
+- Simulation Engine: Refactored `delete_dead_bacteria()` to extract, finalize (by setting `death_step`), and transfer the BacteriumRecord to the Stats module prior to memory deallocation.
 - Reorganized source tree and headers into domain subdirectories:
   - `include/core/` and `src/core/` (`Vector2`, `Queue`, `Types`).
   - `include/entities/` and `src/entities/` (`Bacterium`).

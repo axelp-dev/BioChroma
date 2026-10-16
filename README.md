@@ -11,7 +11,7 @@ A C++ Markov chain based Petri dish simulator for multiple bacteria species evol
 - **Data analysis**: Headless simulation metrics are exported as CSV files for post-processing and population dynamics plotting via Python/Matplotlib.
 
 Detailed technical specifications and class diagrams are available in [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).  
-Step-by-step developer tasks and milestone checklists are tracked in [`docs/GUIDELINES.md`](docs/GUIDELINES.md).
+Step-by-step developer tasks and milestone checklists are tracked in [`docs/GUIDELINES.md`](docs/GUIDELINES.md).sts are tracked in [`docs/GUIDELINES.md`](docs/GUIDELINES.md).
 
 
 ## Prerequisites
@@ -61,25 +61,31 @@ BioChroma/
 │   ├── io/                 # Input parsing & logging utilities
 │   │   ├── CmdParser.h     # Header-only CLI argument parser
 │   │   └── Logger.h        # Telemetry & metrics logging interface
-│   └── simulation/         # Core orchestrator & environmental layer
-│       ├── Grid.h          # Discrete 2D nutrient/obstacle grid
-│       ├── Simulation.h    # Engine step loop & ANSI terminal visualizer
-│       └── SimulationConfig.h # Execution configuration encapsulation
+│   ├── simulation/         # Core orchestrator & environmental layer
+│   │   ├── Grid.h          # Discrete 2D nutrient/obstacle grid
+│   │   ├── Simulation.h    # Engine step loop & ANSI terminal visualizer
+│   │   └── SimulationConfig.h # Execution configuration encapsulation
+│   └── stats/              # Telemetry & metrics collection
+│       └── Stats.h         # Stats module & BacteriumRecord container
 ├── src/                    # Source files grouped by functional domain
 │   ├── core/
 │   │   ├── Queue.cpp       # Explicit instantiations / queue utilities
 │   │   └── Vector2.cpp
 │   ├── entities/
 │   │   └── Bacterium.cpp
-│   └── simulation/
-│       ├── Grid.cpp
-│       └── Simulation.cpp
+│   ├── simulation/
+│   │   ├── Grid.cpp
+│   │   └── Simulation.cpp
+│   └── stats/
+│       └── Stats.cpp       # Telemetry logic and CSV exports
 ├── tests/                  # Unit test suites & assertions runner
 │   ├── main_test.cpp       # Main test harness runner
 │   ├── test_bacterium.cpp
 │   ├── test_grid.cpp
+│   ├── test_queue.cpp
 │   ├── test_simulation.cpp
 │   ├── test_simulation_config.cpp
+│   ├── test_stats.cpp      # Stats & BacteriumRecord logic
 │   ├── test_vector2.cpp
 │   └── TestRunner.h
 ├── main.cpp                # CLI entry point
