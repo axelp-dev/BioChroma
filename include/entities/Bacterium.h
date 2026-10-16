@@ -3,6 +3,7 @@
 
 #include "core/Vector2.h"
 #include "core/Types.h"
+#include "stats/Stats.h"
 #include <stdint.h>
 #include <random>
 #include <math.h>
@@ -15,6 +16,8 @@ class Bacterium {
         float velocity; 
         float mutation_prob; 
         uint32_t id;
+        BacteriumRecord* record; 
+
     
     public: 
         // Attributes 
@@ -29,8 +32,18 @@ class Bacterium {
         virtual void update(float dt, float local_nutrient); 
         virtual Bacterium* clone(); 
 
+        // NOTE : Implementing a death() method for Bacteria record return ? 
+
         // Getter/Setter
-        void set_id(uint32_t id) {this->id = id;}; 
+        void set_id(uint32_t id) {
+            // Update local id 
+            this->id = id;
+            // Push local id to BacteriumRecord 
+            this->record->id = id; 
+        }; 
+        void set_birth_step(uint32_t n_step) {
+            this->record->birth_step = n_step; 
+        }
 }; 
 
 

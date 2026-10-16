@@ -321,6 +321,7 @@ void Simulation::step() {
         if (b->state == BacteriumState::DIVISION) {
             Bacterium* daughter = b->clone(); 
             daughter->set_id(this->next_bacterium_id); 
+            daughter->set_birth_step(this->current_step); 
             this->add_bacteria(daughter); 
             this->next_bacterium_id++; 
             

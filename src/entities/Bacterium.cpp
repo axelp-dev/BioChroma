@@ -11,6 +11,7 @@ Bacterium::Bacterium() {
     this->velocity = 1.5; 
     this->mutation_prob = 0.5; 
     this->id = 0; 
+    this->record = nullptr; 
 }
 
 Bacterium::Bacterium(const Bacterium& other) {
@@ -20,15 +21,23 @@ Bacterium::Bacterium(const Bacterium& other) {
     this->velocity = other.velocity; 
     this->mutation_prob = other.mutation_prob; 
     this->id = other.id; 
+    this->record = new BacteriumRecord(*(other.record)); 
 }
 
-Bacterium::Bacterium(Vector2 pos, float energy, float vel, float mut_prob, uint32_t id) {
+Bacterium::Bacterium(Vector2 pos, float energy, float vel, float mut_prob, uint32_t parent_id) {
+    // Initialization constructor
     this->position = pos; 
     this->state = BacteriumState::ALIVE;  
     this->energy = energy; 
     this->velocity = vel; 
     this->mutation_prob = mut_prob;
-    this->id = id; 
+    this->id = 0; 
+    // Init BacteriumRecord 
+    this->record = new BacteriumRecord(
+        0,              // Local id modified by Simulation
+        parent_id, 
+        0               // Birth step modified by Simulation 
+    ); 
 }
 
 Bacterium::~Bacterium() {}
@@ -102,7 +111,7 @@ Bacterium* Bacterium::clone() {
         this->energy / 2, 
         this->velocity, 
         this->mutation_prob, 
-        0                           // Put null id for update in Simulation
+        this->id                // To provide parent id 
     ); 
 
     // 2. Change current values 
