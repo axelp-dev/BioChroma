@@ -13,7 +13,8 @@ TEST_SRCS := tests/main_test.cpp \
              tests/test_bacterium.cpp src/entities/Bacterium.cpp \
              tests/test_simulation.cpp src/simulation/Simulation.cpp \
              tests/test_simulation_config.cpp \
-			 tests/test_queue.cpp 
+			 tests/test_queue.cpp \
+			 tests/test_stats.cpp src/stats/Stats.cpp
 
 .PHONY: all clean run test
 
