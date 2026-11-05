@@ -3,8 +3,11 @@
 
 #include "core/Queue.h"
 #include "simulation/SimulationConfig.h"
-#include "string"
+#include <string>
+#include <sstream>
+#include <fstream>
 #include <iostream>
+#include <chrono>
 
 // Define Bacterium record container for Queue elements 
 struct BacteriumRecord {

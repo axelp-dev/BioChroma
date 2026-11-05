@@ -6,6 +6,7 @@ Here are listed all the project changes from the initial commit to the last Unre
 ## [Unreleased]
 
 ### Added
+- CSV export in stats module with `Stats::save()` and `Simulation::clean()` methods. Add `main.cpp` CLI flag (`--output`) for export CSV filepath. 
 - Stats Module: Implemented a standalone telemetry collector that encapsulates the event history queue, decoupling data logging from the core simulation engine.
 - BacteriumRecord: Introduced a lightweight data structure to track agent lineage (`id`, `parent_id`) and lifecycle metrics (`birth_step`, `death_step`, `max_energy_reached`).
 - Implements FIFO Queue as template in `include/Queue.h` for statistic module and pst-simulation analytics (future `stats` module). Every operators and methods are described in [docs/QUEUE.md](docs/QUEUE.md). 

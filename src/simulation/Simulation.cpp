@@ -367,14 +367,41 @@ Vector2 Simulation::wrap_position(const Vector2& pos, int N) {
     return vec;
 }
 
+void Simulation::clean() {
+    /*
+    Clean all bacteria on the Grid for stats export. 
+    */
+    int i = 0; 
+    while (i < this->n_bacteria) {
+        // Add Bacteria to Stats Queue 
+        BacteriumRecord* record = this->bacteria[i]->get_record(); 
+        // Put -1 to death step to flag non-dead bacteria
+        record->death_step = this->current_step; 
+        this->stats->insert(*record); 
+        // Free memory
+        delete this->bacteria[i]; 
+        this->bacteria[i] = nullptr;
+
+        i++; 
+    }
+    this->n_bacteria = 0;
+}
+
 
 void Simulation::launch() {
     // Launch simulation for a total_steps steps
-
     for (int i = 0; i < this->config.total_steps; i++) {
         // Update hidden state 
         this->step(); 
         // Display PetriDish
         this->display(); 
+    }
+
+    // Clean all bacteria 
+    this->clean(); 
+
+    // Save Queue history using Stats module
+    if (this->config.save_simulation) {
+        this->stats->save(); 
     }
 }
