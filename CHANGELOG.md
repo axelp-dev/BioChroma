@@ -2,8 +2,21 @@
 
 Here are listed all the project changes from the initial commit to the last Unreleased version. 
 
+## Unreleased 
 
-## [Unreleased]
+### Added
+
+### Changed
+
+### Fixed
+
+### Deprecated 
+
+### Removed 
+
+---
+
+## [v0.2.0] - 2026-11-05
 
 ### Added
 - CSV export in stats module with `Stats::save()` and `Simulation::clean()` methods. Add `main.cpp` CLI flag (`--output`) for export CSV filepath. 
@@ -46,11 +59,6 @@ Here are listed all the project changes from the initial commit to the last Unre
 - Fix stack-allocated bacterium pointer injection in `tests/test_simulation.cpp` by heap-allocating test instances.
 - Fix compiler warning `-Wdeprecated-copy` on `SimulationConfig` by explicitly defaulting copy assignment operator `operator=`.
 - Fix constructor overload resolution errors during `Simulation` test initialization.
-
-### Deprecated 
-
-### Removed 
-
 
 ---
 

@@ -1,4 +1,4 @@
-# BioChroma 
+# BioChroma - V0.2.0
 
 A C++ Markov chain based Petri dish simulator for multiple bacteria species evolution. Uses a C++20 implementations and a `agar` CLI launcher. 
 
