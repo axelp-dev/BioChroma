@@ -53,7 +53,7 @@
   - Parse metadata headers (`N`, `CELL_SIZE`, `DIFFUSION`).
   - Parse multi-grid matrix sections (`--- NUTRIENTS ---` and `--- BACTERIA ---`).
   - Ensure robust bounds validation and heap initialization before population injection.
-- [ ] **Step 3.2 — Binary Logging & CSV Conversion**
+- [x] **Step 3.2 — Binary Logging & CSV Conversion**
   - Implement `Logger` to stream binary snapshots (`BacteriumRecord`, `NutrientSnapshot`) per timestep.
   - Implement the post-simulation conversion step generating clean, normalized CSV files (`trajectories.csv`, `nutrients.csv`).
   - Declare `friend class Logger;` inside `Simulation` to allow zero-copy serialization.

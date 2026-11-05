@@ -1,8 +1,8 @@
 # BioChroma 
 
-A C++ Markov chain based Petri dish simulator for multiple bacteria species evolution. Uses a C++20 implementations and a `kallisto` CLI launcher (unreleased). 
+A C++ Markov chain based Petri dish simulator for multiple bacteria species evolution. Uses a C++20 implementations and a `agar` CLI launcher. 
 
-## Overview
+## 1. Overview
 
 **BioChroma** simulates the competitive dynamics and evolutionary adaptation of bacterial colonies on a 2D continuous surface. 
 
@@ -11,17 +11,20 @@ A C++ Markov chain based Petri dish simulator for multiple bacteria species evol
 - **Data analysis**: Headless simulation metrics are exported as CSV files for post-processing and population dynamics plotting via Python/Matplotlib.
 
 Detailed technical specifications and class diagrams are available in [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).  
-Step-by-step developer tasks and milestone checklists are tracked in [`docs/GUIDELINES.md`](docs/GUIDELINES.md).sts are tracked in [`docs/GUIDELINES.md`](docs/GUIDELINES.md).
+Step-by-step developer tasks and milestone checklists are tracked in [`docs/GUIDELINES.md`](docs/GUIDELINES.md).
+Changes are tracked [`docs/GUIDELINES.md`](docs/GUIDELINES.md).
 
 
-## Prerequisites
+## 2. Prerequisites
 
-- **C++ Compiler**: Clang (LLVM >= 14) or GCC (>= 11) with full C++20 support.
+- **C++ Compiler**: GCC (>= 11).
 - **Build System**: Make.
-- **Python (Optional, for plots)**: Python 3.9+ with `matplotlib` and `pandas`.
-- **Graphics (Upcoming v0.2)**: [Raylib](https://www.raylib.com/) (`brew install raylib`).
+<!-- - **Python (Optional, for plots)**: Python 3.9+ with `matplotlib` and `pandas`. -->
+<!-- - **Graphics (Upcoming v0.2)**: [Raylib](https://www.raylib.com/) (`brew install raylib`). -->
 
-## Quick Start 
+## 3. Quick Start 
+
+### 3.1 Clone repo and test it 
 
 Start by cloning the repo into your current workspace : 
 ```bash 
@@ -37,6 +40,28 @@ To launch unit tests you ca simply use the `Makefile` command:
 make test 
 ```
 and a colored CLI display will present the tests results. Finnally, run `make clean` to delete build files and folders. 
+
+### 3.2 Usage
+
+**CLI Wraper.** A complete CLI launched is provided by `main.cpp`, and the project executable can be found in `./bin/agar` after compilation. Below are presented the launcher arguments: 
+- `-d`, `--duration`: Simulation duration in steps, 
+- `-t`, `--dt`: Simulation step duration (dt) in seconds, 
+- `-v`, `--verbose`: Display simulation rendering in CLI, 
+- `-s`, `--seed`: Random seed for all random draws to ensure reproductibility (not implemented yet), 
+- `-r`, `--real-time`: Erase previous display at each step, 
+- `-e`, `--delay`: Delay between each displays, 
+- `-g`, `--grid-filepath`: Initialization Grid filepath, 
+- `-o`, `--export-csv`: Export CSV filepath for statistics, 
+
+**Examples**: 
+```bash 
+./bin/agar -d 70 -v -r -g data/grid-examples/oasis_grid10.txt -o data/test_export.csv
+
+./bin/agar -d 70  -r -g data/grid-examples/example_grid10.txt
+```
+
+**Grid Examples.** A simulation initial state is defined by an ASCII grid. You can define your one grid using the templates in `data/grid-examples/`. 
+
 
 ## Architecture Summary 
 

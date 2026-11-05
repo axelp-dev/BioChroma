@@ -161,6 +161,7 @@ classDiagram
             -Stats* stats
             +step() void
             +launch() void
+            +clean() void
             +delete_dead_bacteria() void
         }
     }
@@ -188,7 +189,7 @@ The simulation runs through a discrete-time execution pipeline:
    - **2.2 Nutrient Intake & Metabolic Update**: Each active bacterium consumes available local nutrients (`grid->consume_nutrient_at`) and executes `b->update(dt, nut)`. The bacterium updates its internal `BacteriumRecord` with its new energy peak.
    - **2.3 Fission**: Cells flagged with `BacteriumState::DIVISION` spawn child instances via `b->clone()`, receiving a unique `next_bacterium_id` and passing their current ID as `parent_id`.
    - **2.4 Population Pruning**: `delete_dead_bacteria()` isolates inactive agents. Before `delete` is called, the simulation extracts the `BacteriumRecord`, assigns the exact `death_step`, and pushes it to the `Stats` queue. The pointer is then removed in $\mathcal{O}(1)$ using Swap & Pop.
-3. **Visualization & Telemetry**: `Simulation::display()` prints ANSI-colored terminal views. Upon termination, `Stats::save()` pops all accumulated records to serialize the complete lineage into a CSV format.
+3. **Visualization & Telemetry**: `Simulation::display()` prints ANSI-colored terminal views. Upon termination, `Simulation::launch()` call `Simulation::clean()` to store all remaining Bacterium in `Queue`. Then it uses `Stats::save()` to pops all accumulated `BacteriumRecord` to serialize the complete lineage into a CSV format.
 
 ```mermaid 
 flowchart TD
@@ -211,7 +212,8 @@ flowchart TD
     CheckEnd -->|Yes| NextStep[t = t + dt]
     NextStep --> Diffuse
 
-    CheckEnd -->|No| ExportCSV[("Stats::save() CSV Export")]
-    ExportCSV -.->|Python Analysis| PyPlots[Lineage Plots & Metrics]
+    CheckEnd -->|No| ExportCSV[("Simulation::clean()")]
+    ExportCSV --> StatsSave[("Stats::save()")]
+    StatsSave -.->|Python Analysis| PyPlots[Lineage Plots & Metrics]
 ```
 
